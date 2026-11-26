@@ -28,7 +28,7 @@ const REPO_ROOT_GLOB = escapeFsDenyPath(REPO_ROOT);
 
 const CESIUMRS_BROWSER_DIR = path.resolve(
   process.env.CESIUMRS_BROWSER_DIR ||
-    path.join(REPO_ROOT, '..', 'CesiumRS', 'target', 'browser-scene'),
+    path.join(REPO_ROOT, 'vendor', 'cesiumrs-browser'),
 );
 const HAS_CESIUMRS_BROWSER = existsSync(
   path.join(CESIUMRS_BROWSER_DIR, 'cesium_rs.js'),

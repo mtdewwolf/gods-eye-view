@@ -352,7 +352,9 @@ export async function createCesiumRsRenderer(options) {
     manualLoop = false,
     viewport: initialViewport,
     capabilities: requestedCapabilities,
-    credentials = {},
+    worldDataToken,
+    googleApiKey,
+    googleTokens,
     onDestroy,
   } = options;
 
@@ -638,7 +640,7 @@ export async function createCesiumRsRenderer(options) {
   // ── Globe & Imagery (Phase 2/3 modular port) ──────────────────────────────
   const globePart = createCesiumRsGlobe(engine, {
     capabilities,
-    credentials,
+    credentials: { worldDataToken, googleApiKey, googleTokens },
     initialSky,
     credits,
     camera,
