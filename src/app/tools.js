@@ -313,6 +313,7 @@ export function createApplicationTools({
   window.__godsEyeView = Object.defineProperties(
     {
       viewer,
+      renderer: scene.renderer,
       styleManager,
       tileset,
       dataManager,
