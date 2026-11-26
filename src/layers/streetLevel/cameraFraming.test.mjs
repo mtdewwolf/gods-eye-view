@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { createCameraFraming } from './cameraFraming.js';
+import { bindRenderer } from '../../render/rendererOf.js';
+import { createStubRenderer } from '../../render/stub/index.js';
 import { fakeCesiumViewer } from '../../testSupport/streetLevelFakes.mjs';
 
 /** Height (m) of a Cartesian above the WGS84 ellipsoid. */
@@ -156,4 +158,36 @@ test('a photo that loads after the navigation was detached does not frame', () =
   framing.attachNavigation(null);
   assert.doesNotThrow(() => framing.frame(ticket));
   assert.equal(flights.length, 0);
+});
+
+test('framing a photo keeps the real renderer camera finite during its flight', () => {
+  const renderer = createStubRenderer();
+  const viewer = {};
+  bindRenderer(viewer, renderer);
+  renderer.camera.setView({
+    destination: { lon: -121.4944, lat: 38.5816, height: 900 },
+  });
+  const framing = createCameraFraming({
+    state: {
+      viewer,
+      street: {
+        position: { lon: -121.4944, lat: 38.58497 },
+        bearing: 0,
+        altitude: 12,
+      },
+    },
+  });
+  framing.frame(framing.begin());
+  renderer.testing.tick();
+  renderer.testing.advance(800);
+  const pose = renderer.camera.pose();
+  assert.ok(
+    Number.isFinite(pose.lon) &&
+      Number.isFinite(pose.lat) &&
+      Number.isFinite(pose.height),
+  );
+  renderer.testing.advance(1000);
+  const end = renderer.camera.pose();
+  assert.ok(Number.isFinite(end.lon) && Math.abs(end.lon + 121.4944) < 0.01);
+  renderer.destroy();
 });
