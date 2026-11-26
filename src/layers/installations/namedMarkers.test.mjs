@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as C from 'cesium';
+import * as C from '../../testSupport/cesiumrsCompat.mjs';
 import { createNamedMarkers, namedPointId } from './namedMarkers.js';
 import { createLifecycle } from './lifecycle.js';
 import { bindFakeCesiumCamera } from '../../testSupport/fakeCameraPort.mjs';

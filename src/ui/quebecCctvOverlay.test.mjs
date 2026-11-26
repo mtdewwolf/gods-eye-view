@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fromDegrees } from '../geo/ellipsoid.js';
 import { bindFakeDraw } from '../testSupport/fakeDrawPort.mjs';
-import { fakeCameraPort } from '../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../testSupport/neutralCameraPort.mjs';
 import { createQuebecCctvOverlay } from './quebecCctvOverlay.js';
 
 const MEDIA_URL =

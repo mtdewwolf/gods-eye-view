@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import test from 'node:test';
 import { fromDegrees } from './ellipsoid.js';
 import { sphereFromPoints, sphereUnion } from './sphere.js';

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as C from 'cesium';
+import * as C from '../../testSupport/cesiumrsCompat.mjs';
 import { surfaceViewer } from '../../testSupport/fakeSceneSurface.mjs';
 import {
   detailBand,

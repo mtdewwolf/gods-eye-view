@@ -4,7 +4,7 @@ import { createVesselLayer } from './index.js';
 import { VISIBILITY_UPDATE_MS } from './policy.js';
 import { bindFakeCesiumScene } from '../../testSupport/fakeCesiumScene.mjs';
 import { layerPlacement } from '../../data/placementProvider.js';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { PACE_MAX_HZ, PACE_MIN_HZ } from '../../renderPace.js';
 import { createVesselIconBook } from './iconBook.js';
 

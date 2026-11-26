@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { createMarker } from './marker.js';
 import { bindRenderer } from '../../render/rendererOf.js';
 import { streetPorts } from '../../testSupport/streetLevelFakes.mjs';

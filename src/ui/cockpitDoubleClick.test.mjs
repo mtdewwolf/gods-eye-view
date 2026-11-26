@@ -12,7 +12,7 @@ import {
 } from '../input/testDoubles.mjs';
 import { bindRenderer } from '../render/rendererOf.js';
 import { entityFollowTarget } from '../data/followed.js';
-import { createCesiumInput } from '../render/cesium/input.js';
+import { createCesiumInput } from '../testSupport/cesiumInput.mjs';
 import { routeSceneDoubleClick, onSceneDoubleClick } from './cockpitInput.js';
 import { inputFor } from '../input/dispatcher.js';
 

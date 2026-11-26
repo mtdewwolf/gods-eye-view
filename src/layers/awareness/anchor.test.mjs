@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import { fromDegrees } from '../../geo/index.js';
 import { createControls } from './controls.js';
 import { createSubject } from './subject.js';
 
@@ -11,7 +11,7 @@ test('passive Contacts releases its installation anchor and subject refresh cann
     globalThis.document = prior;
   });
   const anchors = [];
-  const position = Cesium.Cartesian3.fromDegrees(-117.14, 32.87);
+  const position = fromDegrees(-117.14, 32.87);
   const state = {
     enabled: true,
     passive: false,

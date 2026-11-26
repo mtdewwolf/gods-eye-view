@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import { fromDegrees } from '../geo/index.js';
 import transitLayer, {
   TRANSIT_MODE_COLORS,
   TRANSIT_POLL_MS,
@@ -64,7 +64,7 @@ test('every transit mode has a colour and the selected card uses it as accent', 
       `${mode} has a colour`,
     );
   }
-  const position = Cesium.Cartesian3.fromDegrees(-71.06, 42.36, 3);
+  const position = fromDegrees(-71.06, 42.36, 3);
   const card = createTransitSelectedOverlayEntry(
     'mbta:1',
     position,

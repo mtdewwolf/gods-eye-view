@@ -11,7 +11,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { hudReadouts } from './testSupport/hudReadouts.mjs';
 import { registerHooks } from 'node:module';
-import { fakeCameraPort } from './testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from './testSupport/neutralCameraPort.mjs';
 import { toDegrees as deg } from './geo/index.js';
 
 const MGRS_STUB_URL = 'gev-test-stub:mgrs';

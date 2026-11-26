@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { satelliteClassColor } from '../../data/satelliteClass.js';
 import satellitesLayer, {
   _clearSatelliteLabelLifecycleForTest,

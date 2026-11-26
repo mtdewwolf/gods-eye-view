@@ -4,7 +4,7 @@
 // faster time plays.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import { distance, fromDegrees } from '../../geo/index.js';
 import { twoline2satrec } from 'satellite.js';
 import { createCatalog } from './catalog.js';
 import { createOrbits } from './orbits.js';
@@ -68,11 +68,7 @@ function scene(entries, { tracked = null } = {}) {
 
 function sgp4At(atMs) {
   const pos = orbits.propagatePosition(ISS, new Date(atMs));
-  return Cesium.Cartesian3.fromDegrees(
-    pos.longitude,
-    pos.latitude,
-    pos.altitude,
-  );
+  return fromDegrees(pos.longitude, pos.latitude, pos.altitude);
 }
 
 test('a shown point moves to its satellite at the world time; hidden and tracked ones do not', () => {
@@ -88,7 +84,7 @@ test('a shown point moves to its satellite at the world time; hidden and tracked
     { tracked: 'tracked' },
   );
   rendering._reckonPoints(AT_MS);
-  assert.ok(Cesium.Cartesian3.distance(shown.position, sgp4At(AT_MS)) < 1);
+  assert.ok(distance(shown.position, sgp4At(AT_MS)) < 1);
   assert.equal(hidden.writes, 0);
   assert.equal(tracked.writes, 0);
   // The same time again (the clock paused): nothing is written.
@@ -110,12 +106,12 @@ test('between samples the point keeps to the track; far from its sample, a core 
   const soon = AT_MS + ORBIT_SAMPLE_HORIZON_MS / 2;
   rendering._reckonPoints(soon);
   assert.equal(state._catalog.get('iss').orbitSample[0], AT_MS);
-  assert.ok(Cesium.Cartesian3.distance(p.position, sgp4At(soon)) < 5);
+  assert.ok(distance(p.position, sgp4At(soon)) < 5);
   // A seek an hour back samples it again there.
   const back = AT_MS - 3_600_000;
   rendering._reckonPoints(back);
   assert.equal(state._catalog.get('iss').orbitSample[0], back);
-  assert.ok(Cesium.Cartesian3.distance(p.position, sgp4At(back)) < 1);
+  assert.ok(distance(p.position, sgp4At(back)) < 1);
 });
 
 test('a dense extra is left for its round-robin, and stays put once too far from its sample', () => {

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import { bindFakeDraw } from '../testSupport/fakeDrawPort.mjs';
 import {
   DEFAULT_DIRECTIONS_MODE,

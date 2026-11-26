@@ -1,5 +1,5 @@
 /** Camera-only USD interchange. No viewer, providers, environment files or terrain access. */
-import * as C from 'cesium';
+import * as C from '../testSupport/cesiumrsCompat.mjs';
 import { validateSceneDocument } from '../director/document.js';
 import { resolveCameraPose } from '../director/camera.js';
 import { sceneSeekState } from '../director/timeline.js';

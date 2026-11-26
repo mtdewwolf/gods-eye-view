@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import { fromDegrees } from '../../geo/index.js';
 import { createTracking } from './tracking.js';
 import { TRAIL_HEIGHT_M, TRAIL_MAX_POINTS } from './policy.js';
 
@@ -45,7 +45,7 @@ function setup({ geoidN = 40, track = null, clockAt = null } = {}) {
       drawnPositionNow: (record) => {
         const visual = visuals.get(record);
         return visual
-          ? Cesium.Cartesian3.fromDegrees(
+          ? fromDegrees(
               visual.drawnLon,
               visual.drawnLat,
               geoidN + TRAIL_HEIGHT_M,
@@ -89,7 +89,7 @@ const near = (a, b) =>
 test('trail vertices sit TRAIL_HEIGHT_M above the geoid, as Cesium places them', () => {
   const { tracking } = setup({ geoidN: 40 });
   const position = tracking.vesselTrailPosition({ lat: 51.9, lon: 4.05 });
-  const expected = Cesium.Cartesian3.fromDegrees(
+  const expected = fromDegrees(
     4.05,
     51.9,
     40 + TRAIL_HEIGHT_M,
@@ -120,20 +120,20 @@ test('a selected trail backfills older samples ahead of the live fix', async () 
   assert.ok(
     near(
       positions[0],
-      Cesium.Cartesian3.fromDegrees(4.0, 51.8, 40 + TRAIL_HEIGHT_M),
+      fromDegrees(4.0, 51.8, 40 + TRAIL_HEIGHT_M),
     ),
     'oldest first',
   );
   assert.ok(
     near(
       positions[1],
-      Cesium.Cartesian3.fromDegrees(4.02, 51.85, 40 + TRAIL_HEIGHT_M),
+      fromDegrees(4.02, 51.85, 40 + TRAIL_HEIGHT_M),
     ),
   );
   assert.ok(
     near(
       positions[2],
-      Cesium.Cartesian3.fromDegrees(4.05, 51.9, 40 + TRAIL_HEIGHT_M),
+      fromDegrees(4.05, 51.9, 40 + TRAIL_HEIGHT_M),
     ),
   );
   assert.deepEqual(drawn.at(-1), positions);
@@ -188,13 +188,13 @@ test('a long backfill keeps the newest TRAIL_MAX_POINTS vertices', async () => {
   assert.ok(
     near(
       positions[0],
-      Cesium.Cartesian3.fromDegrees(4, firstKept, 40 + TRAIL_HEIGHT_M),
+      fromDegrees(4, firstKept, 40 + TRAIL_HEIGHT_M),
     ),
   );
   assert.ok(
     near(
       positions.at(-1),
-      Cesium.Cartesian3.fromDegrees(4.05, 51.9, 40 + TRAIL_HEIGHT_M),
+      fromDegrees(4.05, 51.9, 40 + TRAIL_HEIGHT_M),
     ),
     'the live fix stays newest',
   );
@@ -202,7 +202,7 @@ test('a long backfill keeps the newest TRAIL_MAX_POINTS vertices', async () => {
 
 const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
 const at = (lat, lon) =>
-  Cesium.Cartesian3.fromDegrees(lon, lat, 40 + TRAIL_HEIGHT_M);
+  fromDegrees(lon, lat, 40 + TRAIL_HEIGHT_M);
 
 test('following the clock, the trail ends at the vessel: fixes after its time wait, and a head joins the last one to it', async () => {
   const T = 1_800_000_000_000;

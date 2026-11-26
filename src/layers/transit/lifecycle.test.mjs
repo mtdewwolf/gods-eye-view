@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import inspector from 'node:inspector/promises';
 import { createTransitLayer } from './index.js';
 import { spriteDrawOrder } from '../../data/spriteOrder.js';
@@ -45,7 +45,7 @@ import {
 } from '../../renderGovernor.js';
 import { fakeInput } from '../../input/testDoubles.mjs';
 import { setClickCardHitTest } from '../../data/pickRegistry.js';
-import { fakeCameraPort } from '../../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../../testSupport/neutralCameraPort.mjs';
 import { fakeDrawPort } from '../../testSupport/fakeDrawPort.mjs';
 import { bindRenderer, rendererOf } from '../../render/rendererOf.js';
 import { fakeSceneQuery } from '../../testSupport/fakeCesiumScene.mjs';

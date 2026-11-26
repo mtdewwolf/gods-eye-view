@@ -83,7 +83,7 @@ test('a recovered city clears its own failure', () => {
 // drive the real proximity check, status poll and lifecycle against a fake
 // GBFS source, so the failure state they read is the state the layer builds.
 
-import { fakeCameraPort } from '../../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../../testSupport/neutralCameraPort.mjs';
 import { bindFakeDraw } from '../../testSupport/fakeDrawPort.mjs';
 import { CITY_BY_ID } from './registry.js';
 import { createIngestion } from './ingestion.js';

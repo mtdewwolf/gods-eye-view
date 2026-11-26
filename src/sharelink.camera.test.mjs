@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ShareLinkManager } from './sharelink.js';
-import { fakeCameraPort } from './testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from './testSupport/neutralCameraPort.mjs';
 
 function setup(t) {
   t.mock.timers.enable({ apis: ['setTimeout'] });

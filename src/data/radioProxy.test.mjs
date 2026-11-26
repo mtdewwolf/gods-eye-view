@@ -6,7 +6,7 @@ import test from 'node:test';
 import { bindFakeDraw } from '../testSupport/fakeDrawPort.mjs';
 // A viewer of the test's own, with no renderer bound: its factories load
 // as the package's `./render/cesium/unbound` export loads them.
-import '../render/cesium/unbound.js';
+import '../testSupport/cesiumUnbound.mjs';
 import { fetchPinnedRadioResponse } from '../../server/providers/radio/transport.js';
 import {
   createRadioProxyMiddleware,

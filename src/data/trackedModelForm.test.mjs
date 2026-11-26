@@ -10,7 +10,7 @@ import { readLayerSource } from '../testSupport/readLayerSource.mjs';
 // load-failure budget and the grounded snap.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import flightsLayer, {
   _setTrackedFlightRefreshStateForTest,
   _trackedModelRegimeActiveForTest as flightsRegimeActive,

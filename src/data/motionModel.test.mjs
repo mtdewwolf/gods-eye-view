@@ -1,7 +1,7 @@
 // src/data/motionModel.test.mjs
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import {
   norm360, norm180,
   courseBetweenCartesians, limitCourseStep,

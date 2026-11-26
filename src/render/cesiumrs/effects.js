@@ -211,8 +211,7 @@ export function createCesiumRsEffects(
   }
 
   function syncClock() {
-    const needsClock =
-      !gone() && activeStyleRecords().some((r) => r.animated);
+    const needsClock = !gone() && activeStyleRecords().some((r) => r.animated);
     if (needsClock && !releaseClock) {
       releaseClock = frame.holdContinuous('effects.style');
       offClockFrame = frame.on('preRender', () => {

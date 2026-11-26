@@ -1,3 +1,4 @@
+import { beginGesture, endGesture, moveGesture } from '../input/gesture.js';
 /**
  * @module render/cesiumrs/renderer
  * @description Phase 1 CesiumRS renderer implementing the required tier of the
@@ -200,7 +201,9 @@ function resolveImageRef(ref, atlases) {
   if (typeof ref === 'object' && ref.canvas)
     return {
       resolved: ref,
-      key: ref.key ? `canvas:${ref.key}` : `canvas-obj:${anonIdFor(ref.canvas)}`,
+      key: ref.key
+        ? `canvas:${ref.key}`
+        : `canvas-obj:${anonIdFor(ref.canvas)}`,
     };
   if (typeof ref === 'object' && ref.blob)
     return { resolved: ref, key: `blob-obj:${anonIdFor(ref.blob)}` };
@@ -259,7 +262,10 @@ function decodeImageRef(resolved, key, promiseCache, decodedCache, sizeHint) {
         } finally {
           bmp.close?.();
         }
-      } else if (typeof resolved === 'object' && typeof resolved.svg === 'string') {
+      } else if (
+        typeof resolved === 'object' &&
+        typeof resolved.svg === 'string'
+      ) {
         const blob = new Blob([resolved.svg], {
           type: 'image/svg+xml;charset=utf-8',
         });
@@ -504,7 +510,9 @@ export async function createCesiumRsRenderer(options) {
 
   const nowMs = () => (externalClock ? externalClock.now() : performance.now());
   const wallTimeMs = () =>
-    typeof externalClock?.date === 'function' ? externalClock.date() : Date.now();
+    typeof externalClock?.date === 'function'
+      ? externalClock.date()
+      : Date.now();
 
   function requestRender(reason = 'request') {
     if (destroyed) return;
@@ -531,7 +539,12 @@ export async function createCesiumRsRenderer(options) {
       const canMotion = capabilities.has('motionSegments');
       const clockMs =
         motionClockTimeMs(record.spec, sceneTime, wallTimeMs()) + aheadMs;
-      return resolveIconPosition(item, clockMs, canMotion, sampleGroundHeightAt);
+      return resolveIconPosition(
+        item,
+        clockMs,
+        canMotion,
+        sampleGroundHeightAt,
+      );
     }
     return item.pos ? positionToEcefSafe(item.pos) : null;
   }
@@ -718,8 +731,7 @@ export async function createCesiumRsRenderer(options) {
       );
     }
     if (spec.blend) engine.set_draw_set_blend(id, String(spec.blend));
-    if (spec.includeInHeightQueries)
-      engine.set_draw_set_height_query(id, true);
+    if (spec.includeInHeightQueries) engine.set_draw_set_height_query(id, true);
 
     function syncPoints() {
       const payload = [];
@@ -804,7 +816,9 @@ export async function createCesiumRsRenderer(options) {
             kind: g.kind,
             fill_color: fillColor,
             extrude_height:
-              typeof item.extrudeHeight === 'number' ? item.extrudeHeight : null,
+              typeof item.extrudeHeight === 'number'
+                ? item.extrudeHeight
+                : null,
             lit: typeof item.lit === 'boolean' ? item.lit : null,
             show,
             pickable,
@@ -869,7 +883,12 @@ export async function createCesiumRsRenderer(options) {
               show,
               pickable,
             });
-          } else if (g.kind === 'ellipse' && g.center && g.semiMajor && g.semiMinor) {
+          } else if (
+            g.kind === 'ellipse' &&
+            g.center &&
+            g.semiMajor &&
+            g.semiMinor
+          ) {
             const c = toCartographicRadians(positionToEcefSafe(g.center));
             const latDeg = (c.lat * 180) / Math.PI;
             const lonDeg = (c.lon * 180) / Math.PI;
@@ -885,7 +904,7 @@ export async function createCesiumRsRenderer(options) {
               const eastM = lx * cosR - ly * sinR;
               const northM = lx * sinR + ly * cosR;
               ring.push({
-                lon: lonDeg + (eastM / (111320 * cosLat)),
+                lon: lonDeg + eastM / (111320 * cosLat),
                 lat: latDeg + northM / 110540,
                 height: c.height,
               });
@@ -916,7 +935,12 @@ export async function createCesiumRsRenderer(options) {
     function evaluateIconPos(item) {
       const canMotion = capabilities.has('motionSegments');
       const clockMs = motionClockTimeMs(record.spec, sceneTime, wallTimeMs());
-      const p = resolveIconPosition(item, clockMs, canMotion, sampleGroundHeightAt);
+      const p = resolveIconPosition(
+        item,
+        clockMs,
+        canMotion,
+        sampleGroundHeightAt,
+      );
       record.currentPos.set(String(item.id), p);
       return p;
     }
@@ -1029,7 +1053,11 @@ export async function createCesiumRsRenderer(options) {
             atlasWaiters.set(info.waitingAtlas, waiters);
           }
           waiters.add(() => {
-            if (!destroyed && !record.disposed && record.items.get(itemKey) === item)
+            if (
+              !destroyed &&
+              !record.disposed &&
+              record.items.get(itemKey) === item
+            )
               pushIconItems([item]);
           });
           continue;
@@ -1159,7 +1187,8 @@ export async function createCesiumRsRenderer(options) {
       }
       if (kind === 'icons') {
         const canMotion = capabilities.has('motionSegments');
-        const canCluster = capabilities.has('cluster') && Boolean(record.spec.cluster);
+        const canCluster =
+          capabilities.has('cluster') && Boolean(record.spec.cluster);
         const needsMotion = canMotion && record.hasMotion;
         const needsMod = Boolean(sampler) || record.modulated;
         if (!needsMotion && !canCluster && !needsMod) return;
@@ -1168,7 +1197,12 @@ export async function createCesiumRsRenderer(options) {
         const clockMs = motionClockTimeMs(record.spec, sceneTime, wallTimeMs());
         if (needsMotion) {
           for (const [key, item] of record.items) {
-            const p = resolveIconPosition(item, clockMs, true, sampleGroundHeightAt);
+            const p = resolveIconPosition(
+              item,
+              clockMs,
+              true,
+              sampleGroundHeightAt,
+            );
             record.currentPos.set(key, p);
           }
         }
@@ -1188,7 +1222,8 @@ export async function createCesiumRsRenderer(options) {
         for (const [key, item] of record.items) {
           const patch = { id: key };
           let dirty = false;
-          const pos = record.currentPos.get(key) ?? positionToEcefSafe(item.pos);
+          const pos =
+            record.currentPos.get(key) ?? positionToEcefSafe(item.pos);
           if (needsMotion) {
             patch.pos = [pos.x, pos.y, pos.z];
             dirty = true;
@@ -1219,8 +1254,7 @@ export async function createCesiumRsRenderer(options) {
       set(items) {
         if (destroyed || record.disposed) return;
         record.items.clear();
-        for (const item of items ?? [])
-          record.items.set(String(item.id), item);
+        for (const item of items ?? []) record.items.set(String(item.id), item);
         syncAll();
       },
       upsert(items) {
@@ -1267,7 +1301,9 @@ export async function createCesiumRsRenderer(options) {
             engine.set_draw_set_show(`${id}::outlines`, record.show);
         }
         if ('drawOrder' in next) {
-          record.drawOrder = Number.isFinite(next.drawOrder) ? next.drawOrder : 0;
+          record.drawOrder = Number.isFinite(next.drawOrder)
+            ? next.drawOrder
+            : 0;
           engine.set_draw_set_order(id, record.drawOrder);
           if (kind === 'shapes')
             engine.set_draw_set_order(`${id}::outlines`, record.drawOrder);
@@ -1334,7 +1370,14 @@ export async function createCesiumRsRenderer(options) {
           const needUpsert = [];
           for (const item of touched) {
             const p = evaluateIconPos(item);
-            if (columns.positions || columns.shown || columns.scales || columns.alphas || columns.colors || columns.courses) {
+            if (
+              columns.positions ||
+              columns.shown ||
+              columns.scales ||
+              columns.alphas ||
+              columns.colors ||
+              columns.courses
+            ) {
               patches.push({
                 id: String(item.id),
                 pos: [p.x, p.y, p.z],
@@ -1449,9 +1492,12 @@ export async function createCesiumRsRenderer(options) {
           const baseCol = toRgba(item.color).slice();
           if (typeof item.alpha === 'number') baseCol[3] *= item.alpha;
           if (typeof item.focus === 'number') baseCol[3] *= item.focus;
-          const pos = record.currentPos.get(key) ?? positionToEcefSafe(item.pos);
+          const pos =
+            record.currentPos.get(key) ?? positionToEcefSafe(item.pos);
           const s = queryPart?.projectPoint?.(pos);
-          const modCol = s ? sampler.modulateRgba(baseCol, s.x, s.y, false) : baseCol;
+          const modCol = s
+            ? sampler.modulateRgba(baseCol, s.x, s.y, false)
+            : baseCol;
           base.push({ id: key, color: baseCol });
           mod.push({ id: key, color: modCol });
         }
@@ -1465,7 +1511,9 @@ export async function createCesiumRsRenderer(options) {
         for (const [key, item] of record.items) {
           const baseCol = toRgba(item.color);
           const s = queryPart?.projectPoint?.(item.pos);
-          const modCol = s ? sampler.modulateRgba(baseCol, s.x, s.y, false) : baseCol;
+          const modCol = s
+            ? sampler.modulateRgba(baseCol, s.x, s.y, false)
+            : baseCol;
           base.push({ id: key, color: baseCol });
           mod.push({ id: key, color: modCol });
         }
@@ -1513,7 +1561,8 @@ export async function createCesiumRsRenderer(options) {
     let drilled;
     let grounded;
     ev.pick = () => {
-      if (picked === undefined) picked = query.pick(ev.position.x, ev.position.y);
+      if (picked === undefined)
+        picked = query.pick(ev.position.x, ev.position.y);
       return picked;
     };
     ev.drill = (opts) => {
@@ -1570,7 +1619,9 @@ export async function createCesiumRsRenderer(options) {
       enable_tilt: Boolean(ctrl.enableTilt),
       enable_zoom: Boolean(ctrl.enableZoom),
       enable_look: true,
-      minimum_zoom_distance: Number.isFinite(ctrl.minDistance) ? ctrl.minDistance : 1,
+      minimum_zoom_distance: Number.isFinite(ctrl.minDistance)
+        ? ctrl.minDistance
+        : 1,
       maximum_zoom_distance: Number.isFinite(maxDist) ? maxDist : 1e30,
       zoom_factor: Number.isFinite(ctrl.zoomFactor) ? ctrl.zoomFactor : 5,
       inertia_spin: coastToInertia(ctrl.coast?.drag ?? 0.4),
@@ -1592,9 +1643,7 @@ export async function createCesiumRsRenderer(options) {
   const wallOrigin = new Date(wallTimeMs()).getTime();
   const controllerTimeMs = (ms = nowMs()) => {
     const wall =
-      typeof externalClock?.date === 'function'
-        ? wallOrigin + ms
-        : Date.now();
+      typeof externalClock?.date === 'function' ? wallOrigin + ms : Date.now();
     return new Date(wall).getTime() - wallOrigin + 1e-6;
   };
 
@@ -1610,7 +1659,12 @@ export async function createCesiumRsRenderer(options) {
     let ey = y;
     let wheelDelta = 0;
     if (type === 'down') {
-      kind = button === 1 ? 'middle_down' : button === 2 ? 'right_down' : 'left_down';
+      kind =
+        button === 1
+          ? 'middle_down'
+          : button === 2
+            ? 'right_down'
+            : 'left_down';
     } else if (type === 'up') {
       kind = button === 1 ? 'middle_up' : button === 2 ? 'right_up' : 'left_up';
     } else if (type === 'move') {
@@ -1675,7 +1729,9 @@ export async function createCesiumRsRenderer(options) {
       position: { x, y },
       ...(extra.endPosition ? { endPosition: extra.endPosition } : {}),
       button: extra.button ?? 0,
-      modifiers: extra.modifiers ? { ...NO_MODIFIERS, ...extra.modifiers } : { ...NO_MODIFIERS },
+      modifiers: extra.modifiers
+        ? { ...NO_MODIFIERS, ...extra.modifiers }
+        : { ...NO_MODIFIERS },
       timestamp: extra.timestamp ?? nowMs(),
       pointerType: extra.pointerType ?? 'mouse',
       ...(extra.gesture ? { gesture: extra.gesture } : {}),
@@ -1683,7 +1739,12 @@ export async function createCesiumRsRenderer(options) {
     };
     if (type === 'click' || type === 'dblclick') enrichClickEvent(ev);
     router.dispatch(ev);
-    if (type === 'down' || type === 'move' || type === 'up' || type === 'wheel') {
+    if (
+      type === 'down' ||
+      type === 'move' ||
+      type === 'up' ||
+      type === 'wheel'
+    ) {
       forwardPointerToController(type, x, y, extra);
     }
   }
@@ -1703,7 +1764,7 @@ export async function createCesiumRsRenderer(options) {
     const pt = canvasXY(dom);
     const mods = modsOf(dom);
     const button = dom.button === 1 ? 1 : dom.button === 2 ? 2 : 0;
-    downInfo.set(dom.pointerId, { x: pt.x, y: pt.y, t: nowMs(), button });
+    downInfo.set(dom.pointerId, beginGesture(pt, nowMs(), button));
     lastPointerXY = pt;
     dispatchPointer('down', pt.x, pt.y, {
       button,
@@ -1717,6 +1778,7 @@ export async function createCesiumRsRenderer(options) {
     const mods = modsOf(dom);
     const prev = lastPointerXY ?? pt;
     const start = downInfo.get(dom.pointerId);
+    if (start) moveGesture(start, pt);
     lastPointerXY = pt;
     dispatchPointer('move', prev.x, prev.y, {
       endPosition: pt,
@@ -1731,7 +1793,8 @@ export async function createCesiumRsRenderer(options) {
     const mods = modsOf(dom);
     const start = downInfo.get(dom.pointerId);
     downInfo.delete(dom.pointerId);
-    const button = start?.button ?? (dom.button === 1 ? 1 : dom.button === 2 ? 2 : 0);
+    const button =
+      start?.button ?? (dom.button === 1 ? 1 : dom.button === 2 ? 2 : 0);
     dispatchPointer('up', pt.x, pt.y, {
       button,
       modifiers: mods,
@@ -1739,13 +1802,13 @@ export async function createCesiumRsRenderer(options) {
       _dom: true,
     });
     if (start) {
-      const travelPx = Math.hypot(pt.x - start.x, pt.y - start.y);
-      if (travelPx <= 6) {
+      const gesture = endGesture(start, pt, nowMs());
+      if (gesture.travelPx <= 6) {
         dispatchPointer('click', pt.x, pt.y, {
           button,
           modifiers: mods,
           pointerType: dom.pointerType || 'mouse',
-          gesture: { travelPx, durationMs: Math.max(0, nowMs() - start.t) },
+          gesture,
         });
       }
     }
@@ -1764,7 +1827,11 @@ export async function createCesiumRsRenderer(options) {
     if (router.port.isPointerFree() && camera.port.controls.enabled) {
       dom.preventDefault();
     }
-    dispatchPointer('wheel', pt.x, pt.y, { delta, modifiers: mods, _dom: true });
+    dispatchPointer('wheel', pt.x, pt.y, {
+      delta,
+      modifiers: mods,
+      _dom: true,
+    });
   };
   const onContextMenu = (dom) => dom.preventDefault();
 
@@ -2093,7 +2160,10 @@ export async function createCesiumRsRenderer(options) {
       ? Math.max(1, Math.min(canvas.width - x, Math.round(crop.width * dpr)))
       : canvas.width;
     const srcH = crop
-      ? Math.max(1, Math.min(canvas.height - yCss, Math.round(crop.height * dpr)))
+      ? Math.max(
+          1,
+          Math.min(canvas.height - yCss, Math.round(crop.height * dpr)),
+        )
       : canvas.height;
     const glY = Math.max(0, canvas.height - yCss - srcH);
     const bytes = engine.read_pixels(x, glY, srcW, srcH);
@@ -2102,12 +2172,18 @@ export async function createCesiumRsRenderer(options) {
     const srcCanvas =
       typeof OffscreenCanvas !== 'undefined'
         ? new OffscreenCanvas(srcW, srcH)
-        : Object.assign(doc.createElement('canvas'), { width: srcW, height: srcH });
+        : Object.assign(doc.createElement('canvas'), {
+            width: srcW,
+            height: srcH,
+          });
     srcCanvas.getContext('2d').putImageData(raw, 0, 0);
     const dstCanvas =
       typeof OffscreenCanvas !== 'undefined'
         ? new OffscreenCanvas(outW, outH)
-        : Object.assign(doc.createElement('canvas'), { width: outW, height: outH });
+        : Object.assign(doc.createElement('canvas'), {
+            width: outW,
+            height: outH,
+          });
     const dstCtx = dstCanvas.getContext('2d');
     dstCtx.drawImage(srcCanvas, 0, 0, srcW, srcH, 0, 0, outW, outH);
     return dstCtx.getImageData(0, 0, outW, outH);
@@ -2116,7 +2192,8 @@ export async function createCesiumRsRenderer(options) {
   async function capture(opts = {}) {
     if (destroyed) throw destroyedError();
     const mime = opts.type === 'jpeg' ? 'image/jpeg' : 'image/png';
-    const qualityArg = typeof opts.quality === 'number' ? opts.quality : undefined;
+    const qualityArg =
+      typeof opts.quality === 'number' ? opts.quality : undefined;
     if (!opts.crop && (!opts.scale || opts.scale === 1)) {
       return new Promise((resolve, reject) => {
         canvas.toBlob(
@@ -2133,12 +2210,20 @@ export async function createCesiumRsRenderer(options) {
     const sw = opts.crop ? Math.round(opts.crop.width * dpr) : canvas.width;
     const sh = opts.crop ? Math.round(opts.crop.height * dpr) : canvas.height;
     const s = opts.scale ?? 1;
-    const outW = Math.max(1, Math.round((opts.crop ? opts.crop.width : viewport.width) * s));
-    const outH = Math.max(1, Math.round((opts.crop ? opts.crop.height : viewport.height) * s));
+    const outW = Math.max(
+      1,
+      Math.round((opts.crop ? opts.crop.width : viewport.width) * s),
+    );
+    const outH = Math.max(
+      1,
+      Math.round((opts.crop ? opts.crop.height : viewport.height) * s),
+    );
     const outCanvas = doc.createElement('canvas');
     outCanvas.width = outW;
     outCanvas.height = outH;
-    outCanvas.getContext('2d').drawImage(canvas, sx, sy, sw, sh, 0, 0, outW, outH);
+    outCanvas
+      .getContext('2d')
+      .drawImage(canvas, sx, sy, sw, sh, 0, 0, outW, outH);
     return new Promise((resolve, reject) => {
       outCanvas.toBlob(
         (blob) =>
@@ -2199,7 +2284,8 @@ export async function createCesiumRsRenderer(options) {
       await new Promise((r) => setTimeout(r, delay));
     }
     const blockers = [];
-    if (pendingImageDecodes > 0 || !engine.icons_ready()) blockers.push('icons');
+    if (pendingImageDecodes > 0 || !engine.icons_ready())
+      blockers.push('icons');
     if (modelsInFlight() || !engine.models_ready()) blockers.push('models');
     if (!fieldsSettled()) blockers.push('fields');
     if (!globe.isSettled('imagery')) blockers.push('imagery');

@@ -3,7 +3,7 @@
 // reach, the easing onto and off a target, and the reach list.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from './testSupport/cesiumrsCompat.mjs';
 import {
   ORBITAL_FOCUS_EASE_TAU_MS,
   easeFocusRemainder,

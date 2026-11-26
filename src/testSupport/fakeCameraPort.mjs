@@ -2,13 +2,13 @@
  * A camera port for tests of code that reads the camera: a settable pose,
  * a settable view rectangle, and events the test raises itself.
  */
-import { createCameraEvents } from '../render/camera/events.js';
+export { fakeCameraPort } from './neutralCameraPort.mjs';
 import { toDegrees } from '../geo/index.js';
 import { bindRenderer, rendererOf } from '../render/rendererOf.js';
-import { createCesiumCamera } from '../render/cesium/camera.js';
+import { createCesiumCamera } from './cesiumCamera.mjs';
 import { fakeCesiumCredits } from './fakeCreditsPort.mjs';
 import { entityFollowTarget, followedOf } from '../data/followed.js';
-import * as Cesium from 'cesium';
+import * as Cesium from './cesiumrsCompat.mjs';
 
 const DEFAULT_POSE = Object.freeze({
   lon: 0,
@@ -27,45 +27,6 @@ const DEFAULT_POSE = Object.freeze({
   far: 5e8,
   frameIsIdentity: true,
 });
-
-/**
- * @param {{pose?: object, viewRectangle?: object|null}} [initial]
- */
-export function fakeCameraPort({ pose = {}, viewRectangle = null } = {}) {
-  let current = { ...DEFAULT_POSE, ...pose };
-  let rect = viewRectangle;
-  const events = createCameraEvents({
-    pose: () => ({ ...current }),
-    report: (error) => {
-      throw error;
-    },
-  });
-  const counts = {};
-  const port = {
-    pose: () => ({ ...current }),
-    viewRectangle: () => (rect ? { ...rect } : null),
-    on(event, cb, options) {
-      const off = events.on(event, cb, options);
-      counts[event] = (counts[event] ?? 0) + 1;
-      let live = true;
-      return () => {
-        if (live) counts[event] -= 1;
-        live = false;
-        off();
-      };
-    },
-  };
-  return {
-    port,
-    /** Change the pose the port reports. */
-    setPose: (fields) => (current = { ...current, ...fields }),
-    setViewRectangle: (next) => (rect = next),
-    emit: (event) => events.emit(event),
-    /** Run the contract's `changed` measure, as a frame would. */
-    stepChanged: () => events.stepChanged(),
-    listenerCount: (event) => counts[event] ?? 0,
-  };
-}
 
 /**
  * Cesium's entity tracking for a fake viewer without entities of its own:

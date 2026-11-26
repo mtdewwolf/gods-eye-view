@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
  */
 
 const DRAW_MODELS_SOURCE = readFileSync(
-  new URL('../render/cesium/drawModels.js', import.meta.url),
+  new URL('../render/cesiumrs/drawModels.js', import.meta.url),
   'utf8',
 );
 
@@ -33,16 +33,12 @@ function numericConstant(source, name) {
 for (const layer of LAYERS) {
   const source = readLayerSource(layer.path);
 
-  test(`${layer.name}: every GLB creation bypasses the tile-contended frame-spread queue`, () => {
-    // The fleet and tracked models are draw-port models sets; the Cesium
-    // draw port creates every model off the frame-spread queue.
+  test(`${layer.name}: every GLB is loaded through the draw port's model set`, () => {
+    // The fleet and tracked models are draw-port models sets; the renderer
+    // owns loading and attaching every GLB it draws.
     assert.match(source, /\.models\(\{\s*id:/, 'the layer draws its models as draw-port models sets');
-    const calls = [...DRAW_MODELS_SOURCE.matchAll(/Cesium\.Model\.fromGltfAsync\(\{([\s\S]*?)\}\)/g)];
-    assert.ok(calls.length >= 1, 'the draw port creates models');
-    for (const [index, call] of calls.entries()) {
-      assert.match(call[1], /\basynchronous:\s*false\b/,
-        `_createModel call ${index + 1} must keep bounded GLB readiness independent of tile jobs`);
-    }
+    assert.match(DRAW_MODELS_SOURCE, /engine\.create_model_set\(/, 'the draw port makes a models set');
+    assert.match(DRAW_MODELS_SOURCE, /engine\.attach_model\(/, 'the draw port attaches each loaded GLB');
   });
 
   test(`${layer.name}: Cockpit 3D obeys the shared Display toggle`, () => {

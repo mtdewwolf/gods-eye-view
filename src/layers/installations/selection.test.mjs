@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import * as context from '../../data/contextStore.js';
 import { createSelection } from './selection.js';
 import { createRendering } from './rendering.js';

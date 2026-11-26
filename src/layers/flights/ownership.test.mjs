@@ -182,7 +182,7 @@ test('a flight layer without an icon set declines contact refreshes', () => {
 });
 
 test('the tracked trail head is drawn each frame while tracked and stops with the trail', async () => {
-  const Cesium = await import('cesium');
+  const Cesium = await import('../../testSupport/cesiumrsCompat.mjs');
   const { bindFakeDraw } = await import('../../testSupport/fakeDrawPort.mjs');
   const trails = await import('../../data/trailRenderer.js');
   const listeners = new Set();

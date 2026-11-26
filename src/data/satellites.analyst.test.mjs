@@ -1,7 +1,7 @@
 // Focused tests for the satellite analyst-record mapper and snapshot seam.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import { fromDegrees } from '../geo/index.js';
 import { twoline2satrec } from 'satellite.js';
 import satellitesLayer, {
   mapAnalystRecord,
@@ -96,7 +96,7 @@ test('satellite getAnalystRecords: disabled or empty catalog returns []', () => 
 test('satellite getAnalystRecords: core rows beat dense extras under the cap', () => {
   const satrec = twoline2satrec(ISS_L1, ISS_L2);
   const point = {
-    pos: Cesium.Cartesian3.fromDegrees(-97.7, 30.2, 420_000),
+    pos: fromDegrees(-97.7, 30.2, 420_000),
   };
   _setTrackedSatelliteRefreshStateForTest({
     noradId: ISS_NORAD,
@@ -112,7 +112,7 @@ test('satellite getAnalystRecords: core rows beat dense extras under the cap', (
         name: 'STARLINK-TEST',
         satrec,
         group: 'dense',
-        point: { pos: Cesium.Cartesian3.fromDegrees(-90, 20, 550_000) },
+        point: { pos: fromDegrees(-90, 20, 550_000) },
       },
       {
         noradId: 24876,
@@ -120,7 +120,7 @@ test('satellite getAnalystRecords: core rows beat dense extras under the cap', (
         satrec,
         group: 'gps-ops',
         point: {
-          pos: Cesium.Cartesian3.fromDegrees(-100, 10, 20_200_000),
+          pos: fromDegrees(-100, 10, 20_200_000),
         },
       },
     ],
@@ -156,7 +156,7 @@ test('satellite getAnalystRecords: core rows beat dense extras under the cap', (
 test('satellite getAnalystRecords: a hidden class stays out, the tracked one stays in', () => {
   const satrec = twoline2satrec(ISS_L1, ISS_L2);
   const at = (lon, alt) => ({
-    position: Cesium.Cartesian3.fromDegrees(lon, 10, alt),
+    position: fromDegrees(lon, 10, alt),
   });
   _setTrackedSatelliteRefreshStateForTest({
     noradId: ISS_NORAD,

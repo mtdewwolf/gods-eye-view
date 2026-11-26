@@ -493,7 +493,7 @@ test('Austin TomTom fixture matches congestion onto OFM detail roads without cha
 });
 
 test('late closures hide and stop dots; coverage counts shown matched dots, and reopening restores them', async () => {
-  const C = await import('cesium');
+  const C = await import('../../testSupport/cesiumrsCompat.mjs');
   const { state, model, controls } = await matchingContext(async () => []);
   const matched = { flow: { level: 1, closure: false }, type: 'primary' };
   const sim = { flow: null, type: 'residential' };

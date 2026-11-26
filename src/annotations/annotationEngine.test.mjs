@@ -13,7 +13,7 @@ import { createStandalonePlaceSearch } from '../standalone/placeSearch.js';
 //
 // Run with: npm test   (node --test)
 import { test } from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import assert from 'node:assert/strict';
 import {
   createAnnotationEngine,

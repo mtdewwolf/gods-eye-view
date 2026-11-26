@@ -1,5 +1,5 @@
 import { bindOverlayPorts } from '../testSupport/fakeOverlayPorts.mjs';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import {
   AMBIENT_CARD_COLLISION_CAPACITY,
   destroyWorldOverlay,

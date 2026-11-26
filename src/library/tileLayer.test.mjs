@@ -10,7 +10,7 @@ import {
 import { LIBRARY_ENTRIES, libraryEntry } from './catalog.js';
 import { libraryTileUrl } from './manifest.js';
 import { createLibrarySource } from './source.js';
-import { layerOptions } from '../render/cesium/imagery.js';
+import { layerOptions } from '../testSupport/cesiumImagery.mjs';
 import { fakeGlobePort } from '../testSupport/fakeGlobePort.mjs';
 import { bindFakeDraw } from '../testSupport/fakeDrawPort.mjs';
 

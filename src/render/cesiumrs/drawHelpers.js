@@ -50,7 +50,12 @@ export function packPositions(positions) {
  * Evaluate an icon item's current ECEF position under `motionSegments` and
  * `height: 'clampGround'`.
  */
-export function resolveIconPosition(item, motionClockMs, canMotion, sampleGroundHeight) {
+export function resolveIconPosition(
+  item,
+  motionClockMs,
+  canMotion,
+  sampleGroundHeight,
+) {
   let pos;
   if (canMotion && item.motion) {
     pos = iconPosition(item, motionClockMs);
@@ -103,9 +108,7 @@ export function applyColumnsToRecord(record, columns) {
   const dirty = columns.dirty;
 
   const ranges =
-    Array.isArray(dirty) && dirty.length > 0
-      ? dirty
-      : [{ start: 0, end: n }];
+    Array.isArray(dirty) && dirty.length > 0 ? dirty : [{ start: 0, end: n }];
   const touched = [];
 
   for (const run of ranges) {
@@ -182,7 +185,10 @@ export function computeIconClusters(
       pixelSize: Math.max(w, h),
     });
   }
-  const eyeHeight = Math.max(0, toCartographicRadians(cameraPose.position).height);
+  const eyeHeight = Math.max(
+    0,
+    toCartographicRadians(cameraPose.position).height,
+  );
   const res = clusterScreenPoints({
     points,
     pixelRange,
@@ -314,7 +320,10 @@ function clipSegmentByTime(p0, p1, t0, t1, minT, maxT) {
 /**
  * Expand one `LineItem` into one or more `JsLineItem` payloads for `BrowserScene::replace_lines`.
  */
-export function expandLineItem(item, { recordPickable, sceneTime, capabilities }) {
+export function expandLineItem(
+  item,
+  { recordPickable, sceneTime, capabilities },
+) {
   const payload = [];
   const style = item.style ?? { kind: 'solid', color: [1, 1, 1, 1] };
   const baseColor = toRgba(style.color);
@@ -346,7 +355,12 @@ export function expandLineItem(item, { recordPickable, sceneTime, capabilities }
     const rimShade = Number(style.rim?.shade ?? 0.25);
     const rimFrac = Number(style.rim?.widthFraction ?? 0);
     const rimWidth = rimFrac > 0 ? Math.max(1, widthPx * rimFrac) : 0;
-    const darken = (c) => [c[0] * rimShade, c[1] * rimShade, c[2] * rimShade, c[3]];
+    const darken = (c) => [
+      c[0] * rimShade,
+      c[1] * rimShade,
+      c[2] * rimShade,
+      c[3],
+    ];
     const firstPos = slicePackedPositions(packed, 0, splitAt);
     const secondPos = slicePackedPositions(packed, splitAt, 1);
     for (const [pos, col] of [
@@ -379,7 +393,9 @@ export function expandLineItem(item, { recordPickable, sceneTime, capabilities }
       ? Array.from(ageFade.times)
       : null;
   const segShow = Array.isArray(item.segmentShow) ? item.segmentShow : null;
-  const segColors = Array.isArray(item.segmentColors) ? item.segmentColors : null;
+  const segColors = Array.isArray(item.segmentColors)
+    ? item.segmentColors
+    : null;
   const runs = splitRuns(
     packed,
     times,
@@ -388,7 +404,9 @@ export function expandLineItem(item, { recordPickable, sceneTime, capabilities }
     canBreaks ? item.breaks : null,
   );
 
-  const outlineColor = style.outline?.color ? toRgba(style.outline.color) : null;
+  const outlineColor = style.outline?.color
+    ? toRgba(style.outline.color)
+    : null;
   const outlineWidth = Number(style.outline?.widthPx ?? 0);
 
   for (const run of runs) {
@@ -404,15 +422,32 @@ export function expandLineItem(item, { recordPickable, sceneTime, capabilities }
       const minT = hasWindow ? sceneTime - ageFade.showMs : -Infinity;
       const maxT = hasWindow ? sceneTime : Infinity;
       const windowMs = Math.max(1, Number(ageFade.windowMs ?? 60_000));
-      const alphaFloor = Math.min(1, Math.max(0, Number(ageFade.alphaFloor ?? 0)));
-      const widthFloor = Math.min(1, Math.max(0.05, Number(ageFade.widthFloor ?? 1)));
-      const needsSubdiv = canAgeFade && (alphaFloor < 0.999 || widthFloor < 0.999);
-      const subSteps = needsSubdiv ? Math.max(1, Math.min(24, Math.ceil(24 / Math.max(1, runVerts - 1)))) : 1;
+      const alphaFloor = Math.min(
+        1,
+        Math.max(0, Number(ageFade.alphaFloor ?? 0)),
+      );
+      const widthFloor = Math.min(
+        1,
+        Math.max(0.05, Number(ageFade.widthFloor ?? 1)),
+      );
+      const needsSubdiv =
+        canAgeFade && (alphaFloor < 0.999 || widthFloor < 0.999);
+      const subSteps = needsSubdiv
+        ? Math.max(1, Math.min(24, Math.ceil(24 / Math.max(1, runVerts - 1))))
+        : 1;
 
       for (let i = 0; i < runVerts - 1; i++) {
         if (run.segShow && run.segShow[i] === false) continue;
-        const p0 = [run.packed[i * 3], run.packed[i * 3 + 1], run.packed[i * 3 + 2]];
-        const p1 = [run.packed[(i + 1) * 3], run.packed[(i + 1) * 3 + 1], run.packed[(i + 1) * 3 + 2]];
+        const p0 = [
+          run.packed[i * 3],
+          run.packed[i * 3 + 1],
+          run.packed[i * 3 + 2],
+        ];
+        const p1 = [
+          run.packed[(i + 1) * 3],
+          run.packed[(i + 1) * 3 + 1],
+          run.packed[(i + 1) * 3 + 2],
+        ];
         const t0 = Number(run.times[i]);
         const t1 = Number(run.times[i + 1]);
         const clipped = hasWindow

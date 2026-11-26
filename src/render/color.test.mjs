@@ -8,7 +8,7 @@ test('hex colours become renderer colours at the given alpha', () => {
 });
 
 test('CSS colours read as the default renderer reads them', async () => {
-  const Cesium = await import('cesium');
+  const Cesium = await import('../testSupport/cesiumrsCompat.mjs');
   const { cssColor } = await import('./color.js');
   for (const css of [
     '#39d5ff',
@@ -46,7 +46,7 @@ test('CSS colours read as the default renderer reads them', async () => {
 });
 
 test('HSL colours read as the default renderer computes them', async () => {
-  const Cesium = await import('cesium');
+  const Cesium = await import('../testSupport/cesiumrsCompat.mjs');
   const { hslColor } = await import('./color.js');
   for (const [h, s, l, a] of [
     [0, 0.85, 0.6, 0.12],
@@ -61,7 +61,7 @@ test('HSL colours read as the default renderer computes them', async () => {
 });
 
 test('every colour name the default renderer knows reads as it does', async () => {
-  const Cesium = await import('cesium');
+  const Cesium = await import('../testSupport/cesiumrsCompat.mjs');
   const { cssColor } = await import('./color.js');
   const names = Object.keys(Cesium.Color).filter(
     (key) => /^[A-Z_]+$/.test(key) && Cesium.Color[key] instanceof Cesium.Color,

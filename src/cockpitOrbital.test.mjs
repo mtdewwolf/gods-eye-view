@@ -38,7 +38,7 @@ import {
   imageryLevelForView,
   tilesForPoints,
 } from './cockpitOrbital.js';
-import * as Cesium from 'cesium';
+import * as Cesium from './testSupport/cesiumrsCompat.mjs';
 import { greatCircleKm } from './geoDistance.js';
 
 const RAD = Math.PI / 180;

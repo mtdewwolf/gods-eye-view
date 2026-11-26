@@ -4,7 +4,7 @@
 // docs/superpowers/specs/2026-07-27-vessel-datum-design.md).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import {
   AIS_FIRST_CONNECT_GRACE_MS,
   deriveAisFeedError,

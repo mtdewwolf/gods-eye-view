@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createMilitarySnapshotRenderer } from './snapshotRenderer.js';
 import { createMotion } from './motion.js';
 import { bindRenderer } from '../../render/rendererOf.js';
-import { fakeCameraPort } from '../../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../../testSupport/neutralCameraPort.mjs';
 import { fromDegrees } from '../../geo/ellipsoid.js';
 
 /**

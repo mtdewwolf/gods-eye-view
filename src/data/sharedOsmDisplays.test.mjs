@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as C from 'cesium';
+import * as C from '../testSupport/cesiumrsCompat.mjs';
 import { showOsmCredit, hideOsmCredit } from './dataCredits.js';
 import { bindFakeCesiumCredits, fakeCesiumCredits } from '../testSupport/fakeCreditsPort.mjs';
 import { fakeDrawPort } from '../testSupport/fakeDrawPort.mjs';
@@ -16,7 +16,7 @@ import * as input from './inputOwnership.js';
 import { createOverpassAlprSource } from '../layers/alpr/source.js';
 // The infrastructure layers take clicks through the input port, which their
 // fake renderer leaves to the Cesium adapter's factories.
-import '../render/cesium/camera.js';
+import '../testSupport/cesiumUnbound.mjs';
 
 const noop = () => {};
 const overlayHost = { setEntries: noop, setVisible: noop, clearSource: noop };

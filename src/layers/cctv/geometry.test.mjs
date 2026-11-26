@@ -4,7 +4,7 @@
 // gave, bit for bit, so frustums, probes and planes land where they did.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { createGeometry } from './geometry.js';
 import { createModel } from './model.js';
 
@@ -51,13 +51,13 @@ function cesiumFrame(camera, atPos) {
   const orientation = Cesium.Quaternion.fromRotationMatrix(
     new Cesium.Matrix3(
       right.x,
-      up.x,
-      normal.x,
       right.y,
-      up.y,
-      normal.y,
       right.z,
+      up.x,
+      up.y,
       up.z,
+      normal.x,
+      normal.y,
       normal.z,
     ),
   );

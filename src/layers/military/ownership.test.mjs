@@ -145,7 +145,7 @@ test('a newly seen military contact appears at its delayed position, not ahead o
   // contact's first displayed position is its fix projected back to that
   // delayed time. Creating the icon at the raw fix drew it ahead until
   // the next fleet tick jumped it back.
-  const Cesium = await import('cesium');
+  const Cesium = await import('../../testSupport/cesiumrsCompat.mjs');
   const { RENDER_DELAY_SEC } = await import('./policy.js');
   const supplied = await sceneServices();
   const fixLon = -97.6;
@@ -214,7 +214,7 @@ test('a vanished military contact fades while position-less rows keep theirs', a
   // About a third of a live adsb.lol /v2/mil fetch is contacts without a
   // position. Those rows marked every snapshot partial, so an aircraft that
   // left the feed stayed at full opacity for five minutes.
-  const Cesium = await import('cesium');
+  const Cesium = await import('../../testSupport/cesiumrsCompat.mjs');
   const { readsbSnapshot } = await import('../../sources/live/aircraft.js');
   const nowMs = Date.now();
   const row = (hex, lon) => ({

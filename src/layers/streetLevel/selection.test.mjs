@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { createSelection } from './selection.js';
 import { createPickRouter } from './pickRouter.js';
 import { fakeInput } from '../../input/testDoubles.mjs';

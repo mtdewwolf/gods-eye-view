@@ -2,7 +2,7 @@
 // The layer only announces the click; the UI owns the camera.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from './testSupport/cesiumrsCompat.mjs';
 import { bindFakeCesiumCamera } from './testSupport/fakeCameraPort.mjs';
 import {
   WORLD_CLICK_FOCUS_DURATION_SEC,

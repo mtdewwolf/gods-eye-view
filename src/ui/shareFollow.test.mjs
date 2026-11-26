@@ -3,7 +3,7 @@
 // calls put it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import { applyShareFollowOffset, placeFollowEye } from './shareFollow.js';
 import { followOffsetToEnu } from '../share/viewCodec.js';
 import { withEntityRecord } from '../data/entityRecords.js';

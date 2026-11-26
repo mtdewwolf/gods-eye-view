@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { createQueries } from './queries.js';
 import { createRendering } from './rendering.js';
 import { createIcons } from './icons.js';

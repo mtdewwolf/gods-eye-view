@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import { fromDegrees } from '../../geo/index.js';
 import { createQueries } from './queries.js';
 import { createSubject } from './subject.js';
 import { createModel } from './model.js';
@@ -30,7 +30,7 @@ test('a poll that returns the same stale AIS snapshot restores STALE on Contacts
       id: 'site-1',
       layerId: 'military-installations',
       label: 'Site',
-      position: Cesium.Cartesian3.fromDegrees(0, 0, 0),
+      position: fromDegrees(0, 0, 0),
     },
   };
   let states;
@@ -131,7 +131,7 @@ test('first AIS connect (no snapshot yet) carries no STALE on the Contacts cohor
         id: 'site-1',
         layerId: 'military-installations',
         label: 'Site',
-        position: Cesium.Cartesian3.fromDegrees(0, 0, 0),
+        position: fromDegrees(0, 0, 0),
       },
     };
     const parts = {

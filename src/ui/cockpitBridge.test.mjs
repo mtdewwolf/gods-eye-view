@@ -11,7 +11,7 @@ import { setLocale } from '../i18n/index.js';
 import { useCockpitStore } from './stores/cockpit.js';
 import CockpitView from './views/CockpitView.vue';
 import ContextView from './views/ContextView.vue';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import {
   bindFakeCesiumCamera,
   followEntity,

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { bindRenderer } from '../../render/rendererOf.js';
 import { createStubRenderer } from '../../render/stub/index.js';
 import { createMotion } from './motion.js';

@@ -6,7 +6,7 @@
 // gives everything back when it may not show or is destroyed.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { eciToGeodetic, gstime, propagate, twoline2satrec } from 'satellite.js';
 import { createOrbits } from './orbits.js';
 import { createRendering } from './rendering.js';
@@ -17,7 +17,7 @@ import {
   TRACKED_ORBIT_COLOR,
 } from './policy.js';
 import { bindFakeDraw } from '../../testSupport/fakeDrawPort.mjs';
-import { fakeCameraPort } from '../../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../../testSupport/neutralCameraPort.mjs';
 
 const STATION = 25544;
 const COMPANION = 49044;

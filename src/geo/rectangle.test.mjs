@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import { rayEllipsoid, fromDegrees } from './ellipsoid.js';
 import {
   rectangleCenter,

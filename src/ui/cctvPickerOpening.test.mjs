@@ -6,7 +6,7 @@
 import '../testSupport/registerDom.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import { fromDegrees } from '../geo/index.js';
 import { createPinia } from 'pinia';
 import { createApp, nextTick } from 'vue';
 import cctvLayer, {
@@ -46,7 +46,7 @@ function record(id, [lat, lon]) {
     frustumGeometry: null,
     frustumPositions: null,
     probeClampRangeM: null,
-    position: Cesium.Cartesian3.fromDegrees(lon, lat, 100),
+    position: fromDegrees(lon, lat, 100),
   };
 }
 

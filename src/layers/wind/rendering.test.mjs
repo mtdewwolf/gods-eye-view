@@ -8,7 +8,7 @@ import {
   createShellScene,
   renderShells,
 } from '../weather/shellFixture.mjs';
-import { createCesiumFields } from '../../render/cesium/drawFields.js';
+import { createCesiumFields } from '../../testSupport/cesiumDrawFields.mjs';
 import { toLonLatH } from '../../geo/ellipsoid.js';
 
 function event() {

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { createMotion } from './motion.js';
 import { arcOffsetEnu } from '../../data/motionModel.js';
 import { createMotion as createMilitaryMotion } from '../military/motion.js';

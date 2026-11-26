@@ -1,8 +1,17 @@
 import { afterEach, beforeEach, test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import {
+  cross,
+  distance,
+  dot,
+  fromDegrees,
+  normalize,
+  sub,
+  toCartographicRadians,
+  toDegrees,
+} from '../geo/index.js';
 import { bindRenderer } from '../render/rendererOf.js';
-import { fakeCameraPort } from '../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../testSupport/neutralCameraPort.mjs';
 import { fakeDrawPort } from '../testSupport/fakeDrawPort.mjs';
 import cctvLayer, {
   _cctvIconsForTest,
@@ -33,7 +42,7 @@ afterEach(() => {
 
 function recordsAt(lonLats, height = 10) {
   return lonLats.map(([lon, lat], index) => {
-    const position = Cesium.Cartesian3.fromDegrees(lon, lat, height);
+    const position = fromDegrees(lon, lat, height);
     return {
       camera: {
         id: `cam-${String(index).padStart(4, '0')}`,
@@ -60,15 +69,9 @@ function recordsAt(lonLats, height = 10) {
 const plain = ({ x, y, z }) => ({ x, y, z });
 
 function lookingAt(eye, target, ports = {}) {
-  const direction = Cesium.Cartesian3.normalize(
-    Cesium.Cartesian3.subtract(target, eye, new Cesium.Cartesian3()),
-    new Cesium.Cartesian3(),
-  );
-  const right = Cesium.Cartesian3.normalize(
-    Cesium.Cartesian3.cross(direction, eye, new Cesium.Cartesian3()),
-    new Cesium.Cartesian3(),
-  );
-  const up = Cesium.Cartesian3.cross(right, direction, new Cesium.Cartesian3());
+  const direction = normalize(sub(target, eye));
+  const right = normalize(cross(direction, eye));
+  const up = cross(right, direction);
   return {
     viewer: viewerWithAxes(eye, direction, right, up, ports),
     direction,
@@ -78,7 +81,7 @@ function lookingAt(eye, target, ports = {}) {
 }
 
 function topDown(height, ports = {}) {
-  const eye = Cesium.Cartesian3.fromDegrees(0, 0, height);
+  const eye = fromDegrees(0, 0, height);
   return viewerWithAxes(
     eye,
     { x: -1, y: 0, z: 0 },
@@ -89,11 +92,11 @@ function topDown(height, ports = {}) {
 }
 
 function viewerWithAxes(eye, direction, right, up, ports) {
-  const carto = Cesium.Cartographic.fromCartesian(eye);
+  const carto = toCartographicRadians(eye);
   const { port } = fakeCameraPort({
     pose: {
-      lon: Cesium.Math.toDegrees(carto.longitude),
-      lat: Cesium.Math.toDegrees(carto.latitude),
+      lon: toDegrees(carto.lon),
+      lat: toDegrees(carto.lat),
       height: carto.height,
       position: plain(eye),
       direction: plain(direction),
@@ -119,11 +122,11 @@ function viewerWithAxes(eye, direction, right, up, ports) {
 
 /** Pinhole projection, as the layer's projector. */
 function project(view, eye, point) {
-  const d = Cesium.Cartesian3.subtract(point, eye, new Cesium.Cartesian3());
-  const z = Cesium.Cartesian3.dot(d, view.direction);
+  const d = sub(point, eye);
+  const z = dot(d, view.direction);
   const t = Math.tan(Math.PI / 6);
-  const x = Cesium.Cartesian3.dot(d, view.right) / z / (t * (WIDTH / HEIGHT));
-  const y = Cesium.Cartesian3.dot(d, view.up) / z / t;
+  const x = dot(d, view.right) / z / (t * (WIDTH / HEIGHT));
+  const y = dot(d, view.up) / z / t;
   return { x: (0.5 + x / 2) * WIDTH, y: (0.5 - y / 2) * HEIGHT, z };
 }
 
@@ -140,12 +143,8 @@ for (const [label, horizontalM, aboveM] of [
     // geoid fallback after a 429
     for (const r of records)
       r.groundPrior = { ellipsoid: 2, source: 'geoid-fallback' };
-    const mount = Cesium.Cartesian3.fromDegrees(0, 0, ground + 8);
-    const eye = Cesium.Cartesian3.fromDegrees(
-      0,
-      -horizontalM / 111_320,
-      ground + 8 + aboveM,
-    );
+    const mount = fromDegrees(0, 0, ground + 8);
+    const eye = fromDegrees(0, -horizontalM / 111_320, ground + 8 + aboveM);
     const reads = [];
     const view = lookingAt(eye, mount, {
       globe: { isGlobeVisible: () => true },
@@ -222,8 +221,7 @@ test("the active camera's icon moves beside a count that would cover it", () => 
   const [marker] = cctvLayer._cctvDrawnForTest().counts.markers;
   const metresPerPixel = ((2 * Math.tan(Math.PI / 6)) / HEIGHT) * 19_990;
   const apartPx =
-    Cesium.Cartesian3.distance(marker.pos, icons.item('cam-0000').pos) /
-    metresPerPixel;
+    distance(marker.pos, icons.item('cam-0000').pos) / metresPerPixel;
 
   assert.ok(apartPx > marker.width / 2, 'the marker covers the active icon');
 });

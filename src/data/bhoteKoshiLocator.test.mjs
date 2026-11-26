@@ -9,7 +9,7 @@ import {
   INCIDENT_OVERVIEW_PLACES,
 } from './bhoteKoshiIncidentPlaces.js';
 import { BHOTE_KOSHI_FLOOD_PATH } from './bhoteKoshiFloodPath.js';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import { setLocale } from '../i18n/index.js';
 import {
   registerPickOwner,

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import test from 'node:test';
 import { densifyRhumb, rhumbLine } from './rhumb.js';
 

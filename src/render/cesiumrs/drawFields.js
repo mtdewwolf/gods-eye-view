@@ -155,7 +155,9 @@ function createRasterShellField(
 
     Promise.all([
       decodeImage(imgRef, [64, 64]),
-      detSpec?.image ? decodeImage(detSpec.image, [64, 64]) : Promise.resolve(null),
+      detSpec?.image
+        ? decodeImage(detSpec.image, [64, 64])
+        : Promise.resolve(null),
     ])
       .then(([mainImg, detImg]) => {
         if (gone() || gen !== loadGen) return;
@@ -276,7 +278,8 @@ function createRasterShellField(
       const prev = current;
       current = { ...current, ...patch };
       const geomChanged =
-        ('rectangle' in patch && !sameRect(prev.rectangle, current.rectangle)) ||
+        ('rectangle' in patch &&
+          !sameRect(prev.rectangle, current.rectangle)) ||
         ('heightM' in patch && prev.heightM !== current.heightM);
       const imgChanged =
         ('image' in patch && prev.image !== current.image) ||
@@ -375,7 +378,7 @@ function createWindStreamlinesField(
           out.push({
             id: `w${idx++}`,
             flat,
-            seed: ((idx * 0.61803398875) % 1 + 1) % 1,
+            seed: (((idx * 0.61803398875) % 1) + 1) % 1,
           });
         }
       }

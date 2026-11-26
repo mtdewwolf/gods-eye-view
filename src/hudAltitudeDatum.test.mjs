@@ -25,7 +25,7 @@ import { hudReadouts } from './testSupport/hudReadouts.mjs';
 import { readFileSync } from 'node:fs';
 import { registerHooks } from 'node:module';
 import { ensureGeoidReady } from './data/geoid.js';
-import { fakeCameraPort } from './testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from './testSupport/neutralCameraPort.mjs';
 import { toDegrees as deg } from './geo/index.js';
 
 const MGRS_STUB_URL = 'gev-test-stub:mgrs';

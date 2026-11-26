@@ -49,9 +49,7 @@ function posToEcef(pos) {
 }
 
 function focusOf(item) {
-  return Number.isFinite(item.focus)
-    ? Math.min(1, Math.max(0, item.focus))
-    : 1;
+  return Number.isFinite(item.focus) ? Math.min(1, Math.max(0, item.focus)) : 1;
 }
 
 function nearFarValue(curve, distance) {
@@ -129,10 +127,22 @@ function buildModelMatrix(pos, orientation, axisScale) {
   const c2z = (ex.z * r02 + ey.z * r12 + ez.z * r22) * sz;
 
   return [
-    c0x, c0y, c0z, 0,
-    c1x, c1y, c1z, 0,
-    c2x, c2y, c2z, 0,
-    origin.x, origin.y, origin.z, 1,
+    c0x,
+    c0y,
+    c0z,
+    0,
+    c1x,
+    c1y,
+    c1z,
+    0,
+    c2x,
+    c2y,
+    c2z,
+    0,
+    origin.x,
+    origin.y,
+    origin.z,
+    1,
   ];
 }
 
@@ -147,10 +157,22 @@ function inverseAffine(m) {
   if (!(Math.abs(det) > 1e-30)) return null;
   const inv = 1 / det;
   const out = [
-    A * inv, B * inv, C * inv, 0,
-    -(d * i - f * g) * inv, (a * i - c * g) * inv, -(a * f - c * d) * inv, 0,
-    (d * h - e * g) * inv, -(a * h - b * g) * inv, (a * e - b * d) * inv, 0,
-    0, 0, 0, 1,
+    A * inv,
+    B * inv,
+    C * inv,
+    0,
+    -(d * i - f * g) * inv,
+    (a * i - c * g) * inv,
+    -(a * f - c * d) * inv,
+    0,
+    (d * h - e * g) * inv,
+    -(a * h - b * g) * inv,
+    (a * e - b * d) * inv,
+    0,
+    0,
+    0,
+    0,
+    1,
   ];
   for (let row = 0; row < 3; row++) {
     out[12 + row] = -(
@@ -236,9 +258,15 @@ function writePartTexture(info, state, timeS, scale, data) {
           moved = true;
       }
     }
-    const a = L[0], b = L[1], c = L[2];
-    const e = L[4], f = L[5], g = L[6];
-    const h = L[8], i = L[9], j = L[10];
+    const a = L[0],
+      b = L[1],
+      c = L[2];
+    const e = L[4],
+      f = L[5],
+      g = L[6];
+    const h = L[8],
+      i = L[9],
+      j = L[10];
     const c00 = f * j - g * i;
     const c01 = -(e * j - g * h);
     const c02 = e * i - f * h;
@@ -337,7 +365,12 @@ export function createCesiumRsModelSet(
 
   const gone = () => record.disposed || isDestroyed();
 
-  function buildOptionsPayload(entry, frameScale = 1, alphaMul = 1, shown = true) {
+  function buildOptionsPayload(
+    entry,
+    frameScale = 1,
+    alphaMul = 1,
+    shown = true,
+  ) {
     const item = entry.item;
     const range = item.displayRange;
     const rangeEmpty = Array.isArray(range) && !(range[1] > range[0]);
@@ -361,13 +394,19 @@ export function createCesiumRsModelSet(
       }
     }
 
-    const blendMode = hasTint ? (item.colorBlend?.mode ?? 'highlight') : 'highlight';
+    const blendMode = hasTint
+      ? (item.colorBlend?.mode ?? 'highlight')
+      : 'highlight';
     const blendAmount =
       blendMode === 'mix' ? (item.colorBlend?.amount ?? DEFAULT_MIX) : 0.5;
     const maskRgba = item.maskColor ? toRgba(item.maskColor) : null;
 
     return {
-      model_matrix: buildModelMatrix(item.pos, item.orientation, item.axisScale),
+      model_matrix: buildModelMatrix(
+        item.pos,
+        item.orientation,
+        item.axisScale,
+      ),
       scale: (Number(item.scale ?? 1) || 1) * frameScale,
       min_pixel_size: Number(item.minPixelSize ?? 0) || 0,
       max_scale:
@@ -502,7 +541,14 @@ export function createCesiumRsModelSet(
     return spinning;
   }
 
-  function computeFrameParams(entry, eye, eyeHeight, rFrame, horizon, metresPerPixelFactor) {
+  function computeFrameParams(
+    entry,
+    eye,
+    eyeHeight,
+    rFrame,
+    horizon,
+    metresPerPixelFactor,
+  ) {
     const item = entry.item;
     const pos = posToEcef(item.pos);
     const dist = Math.hypot(pos.x - eye.x, pos.y - eye.y, pos.z - eye.z);
@@ -514,8 +560,14 @@ export function createCesiumRsModelSet(
     if (item.maxPixelSize > 0 && entry.radius > 0 && metresPerPixelFactor > 0) {
       const mpp = dist * metresPerPixelFactor;
       const baseScale = (Number(item.scale ?? 1) || 1) * scaleMul;
-      const capped = cappedScale(baseScale, entry.radius, mpp, item.maxPixelSize);
-      scaleMul = baseScale > 0 ? (capped / (Number(item.scale ?? 1) || 1)) : scaleMul;
+      const capped = cappedScale(
+        baseScale,
+        entry.radius,
+        mpp,
+        item.maxPixelSize,
+      );
+      scaleMul =
+        baseScale > 0 ? capped / (Number(item.scale ?? 1) || 1) : scaleMul;
     }
     let alphaMul = nearFarValue(item.fadeByDistance, dist);
     const focus = focusOf(item);
@@ -580,7 +632,11 @@ export function createCesiumRsModelSet(
     promise
       .then((loaded) => {
         finish();
-        if (gone() || entry.loadToken !== token || record.entries.get(entry.id) !== entry) {
+        if (
+          gone() ||
+          entry.loadToken !== token ||
+          record.entries.get(entry.id) !== entry
+        ) {
           loaded?.free?.();
           return;
         }
@@ -599,7 +655,11 @@ export function createCesiumRsModelSet(
       })
       .catch((error) => {
         finish();
-        if (gone() || entry.loadToken !== token || record.entries.get(entry.id) !== entry) {
+        if (
+          gone() ||
+          entry.loadToken !== token ||
+          record.entries.get(entry.id) !== entry
+        ) {
           return;
         }
         entry.failedAt = nowMs();
@@ -763,7 +823,10 @@ export function createCesiumRsModelSet(
         engine.set_draw_set_blend(id, next.blend ? String(next.blend) : '');
       }
       if ('includeInHeightQueries' in next) {
-        engine.set_draw_set_height_query(id, Boolean(next.includeInHeightQueries));
+        engine.set_draw_set_height_query(
+          id,
+          Boolean(next.includeInHeightQueries),
+        );
       }
       if ('recede' in next) {
         record.recede = recedeParams(next.recede);

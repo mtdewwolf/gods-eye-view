@@ -3,7 +3,7 @@
 // hands them all back to the Sun.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import {
   createTiangongArticulation,
   TIANGONG_ONE_AXIS_WINGS,

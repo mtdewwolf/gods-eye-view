@@ -8,8 +8,8 @@
  * allocates nothing per call once warm, so the overlay's allocation probe
  * measures the overlay and the occlusion test it runs in the app.
  */
-import * as Cesium from 'cesium';
-import { createCesiumQuery } from '../render/cesium/query.js';
+import * as Cesium from './cesiumrsCompat.mjs';
+import { createCesiumQuery } from './cesiumQuery.mjs';
 import { bindRenderer } from '../render/rendererOf.js';
 import { fakeSceneFrame } from './fakeCesiumScene.mjs';
 

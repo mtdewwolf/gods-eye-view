@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import { vec } from '../geo/index.js';
 import { twoline2satrec } from 'satellite.js';
 import {
   _runSatellitePreRenderForTest,
@@ -18,13 +18,13 @@ const L2 =
 function run(locale) {
   setLocale(locale);
   const entity = withEntityRecord({}, { labelModel: { title: 'OLD', details: ['? km'] } });
-  const point = { pos: new Cesium.Cartesian3() };
+  const point = { pos: vec() };
   const viewer = { camera: null, scene: { frameState: { frameNumber: 1 } } };
   let nowMs = Date.UTC(2008, 8, 20, 12, 30);
   const near = (metres) => ({
     get pos() {
       const tracked = _trackedFrameCartesianForTest();
-      return new Cesium.Cartesian3(tracked.x + metres, tracked.y, tracked.z);
+      return vec(tracked.x + metres, tracked.y, tracked.z);
     },
   });
   _setTrackedSatelliteRefreshStateForTest({

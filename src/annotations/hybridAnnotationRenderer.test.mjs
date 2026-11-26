@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import { createPinia } from 'pinia';
 import { useScreenAnnotationsStore } from '../ui/stores/screenAnnotations.js';
 import { createHybridAnnotationRenderer } from './hybridAnnotationRenderer.js';

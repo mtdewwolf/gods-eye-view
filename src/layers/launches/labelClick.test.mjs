@@ -1,7 +1,7 @@
 // Clicks on painted mission labels, routed through the real input dispatcher.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Event } from 'cesium';
+import { Event } from '../../testSupport/cesiumrsCompat.mjs';
 import { createLifecycle } from './lifecycle.js';
 import { createState } from './state.js';
 import {

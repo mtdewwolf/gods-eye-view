@@ -1,10 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { resolveFilter } from './filter.js';
 import { createSequenceCones, thinImages } from './sequenceCones.js';
 import { createMarker } from './marker.js';
-import { createCesiumDraw } from '../../render/cesium/draw.js';
 import { bindRenderer } from '../../render/rendererOf.js';
 import { streetPorts } from '../../testSupport/streetLevelFakes.mjs';
 import { fakeDrawPort } from '../../testSupport/fakeDrawPort.mjs';
@@ -261,49 +260,4 @@ test('hiding and destroying the cones show and dispose their set', async () => {
   sequences.destroy();
   assert.equal(set.disposed, true);
   assert.equal(state.sequence.set, null);
-});
-
-test('the cones stay drawn over the photo marker, whichever is drawn first', async () => {
-  const added = [];
-  const scene = {
-    camera: { positionWC: new Cesium.Cartesian3(2e7, 0, 0) },
-    frameState: { mode: Cesium.SceneMode.SCENE3D },
-    updateHeight: () => () => {},
-    getHeight: () => undefined,
-    primitives: {
-      add: (primitive) => (added.push(primitive), primitive),
-      remove: (primitive) => {
-        const at = added.indexOf(primitive);
-        if (at >= 0) added.splice(at, 1);
-        return at >= 0;
-      },
-      get length() {
-        return added.length;
-      },
-      get: (i) => added[i],
-    },
-    requestRender() {},
-  };
-  const { port } = createCesiumDraw({
-    scene,
-    report: (error) => assert.fail(error),
-  });
-  const { state, viewer, source, sequences } = setup({ draw: port });
-  // As the layer starts: the marker's set first, then each provider's cones.
-  const marker = createMarker({
-    state: Object.assign(state, {
-      marker: { set: null, sprite: null, placed: null, look: null },
-    }),
-  });
-  marker.ensure(viewer);
-  sequences.ensureCollections(viewer);
-  // A sequence selected before any photo opens: its cones draw first.
-  sequences.select('A');
-  source.last('A').resolve(records('A'));
-  await settle();
-  marker.set({ lon: -121.49, lat: 38.58 }, 90);
-  const order = added.map((host) => host.get(0)?.id?.id ?? null);
-  assert.deepEqual(order, ['sl:pos', 'mly:img:A-0'], 'bottom to top');
-  sequences.destroy(viewer);
-  marker.destroy();
 });

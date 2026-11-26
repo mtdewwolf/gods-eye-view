@@ -39,9 +39,8 @@ let defaultLoad = null;
 export function loadDefaultRenderer() {
   if (defaultLoad) return defaultLoad;
   const load = (async () => {
-    const { cesiumRsRenderer } = await import(
-      '../render/cesiumrs/application.js'
-    );
+    const { cesiumRsRenderer } =
+      await import('../render/cesiumrs/application.js');
     return cesiumRsRenderer;
   })();
   defaultLoad = load;

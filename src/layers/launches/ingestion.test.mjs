@@ -1,9 +1,9 @@
 // The click dispatcher's input port over a viewer double: the Cesium adapter's.
-import '../../render/cesium/input.js';
+import '../../testSupport/cesiumInput.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { createLaunchSource } from './source.js';
 import { createState } from './state.js';
 import { createModel } from './model.js';

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { createViewport } from './viewport.js';
 import { createLifecycle } from './lifecycle.js';
 import { bindFakeCesiumCamera } from '../../testSupport/fakeCameraPort.mjs';

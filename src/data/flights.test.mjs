@@ -5,7 +5,7 @@ import { after, afterEach, before, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { followedOf } from './followed.js';
 import { bindFakeCesiumCamera } from '../testSupport/fakeCameraPort.mjs';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import flightsLayer, {
   _addFlightTrackingCandidateForTest,
   _applyPendingFlightTrackingRestoreForTest,

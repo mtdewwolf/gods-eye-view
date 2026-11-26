@@ -5,7 +5,7 @@ import { LayerLifecycle } from '../../data/lifecycle.js';
 import { layerFeedState } from '../../data/feedState.js';
 import { fromDegrees } from '../../geo/ellipsoid.js';
 import { bindRenderer } from '../../render/rendererOf.js';
-import { fakeCameraPort } from '../../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../../testSupport/neutralCameraPort.mjs';
 import { bindFakeDraw } from '../../testSupport/fakeDrawPort.mjs';
 
 const row = (hex, lat, degraded) => ({

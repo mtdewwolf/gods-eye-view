@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import './testSupport/stubMgrs.mjs';
 import { hudReadouts } from './testSupport/hudReadouts.mjs';
-import { fakeCameraPort } from './testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from './testSupport/neutralCameraPort.mjs';
 import { toDegrees as deg } from './geo/index.js';
 
 const { IntelHUD } = await import('./hud.js');

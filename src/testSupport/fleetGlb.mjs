@@ -3,9 +3,7 @@
  * triangles in scene space (raw glTF axes, node transforms applied, metres).
  *
  * The GLBs use EXT_meshopt_compression and KHR_mesh_quantization, so their
- * buffers are decoded with the meshoptimizer decoder Cesium itself ships (a
- * dependency of `@cesium/engine`, resolved through it rather than named as one
- * of this package's own).
+ * buffers are decoded with the meshoptimizer decoder the tooling ships.
  */
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
@@ -17,12 +15,8 @@ let decoderPromise = null;
 async function meshoptDecoder() {
   decoderPromise ??= (async () => {
     const fromHere = createRequire(import.meta.url);
-    const fromCesium = createRequire(fromHere.resolve('cesium/package.json'));
-    const fromEngine = createRequire(
-      fromCesium.resolve('@cesium/engine/package.json'),
-    );
     const module = await import(
-      pathToFileURL(fromEngine.resolve('meshoptimizer')).href
+      pathToFileURL(fromHere.resolve('meshoptimizer')).href
     );
     await module.MeshoptDecoder.ready;
     return module.MeshoptDecoder;

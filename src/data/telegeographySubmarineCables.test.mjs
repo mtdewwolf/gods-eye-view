@@ -1,14 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import { MAP_STACKS } from '../mapStackController.js';
 import { fromDegrees, toLonLatH } from '../geo/ellipsoid.js';
 import { bindRenderer } from '../render/rendererOf.js';
-// A viewer with no renderer bound reads its globe through the unbound port.
-import '../render/cesium/globe.js';
+import '../testSupport/cesiumGlobe.mjs';
 import { bindFakeDraw } from '../testSupport/fakeDrawPort.mjs';
-import { fakeCameraPort } from '../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../testSupport/neutralCameraPort.mjs';
 import { fakeSceneFrame } from '../testSupport/fakeCesiumScene.mjs';
 import {
   CABLE_LABEL_DEPTH_DECISION,

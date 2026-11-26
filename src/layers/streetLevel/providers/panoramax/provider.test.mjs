@@ -360,7 +360,7 @@ test('a picture Panoramax does not know, or an id it refuses, fails the open wit
 
 /** Cones on a stand-in Cesium viewer; `count()` reads how many are drawn. */
 async function withCones(t, env) {
-  const Cesium = await import('cesium');
+  const Cesium = await import('../../../../testSupport/cesiumrsCompat.mjs');
   // The cone glyph draws on a canvas: any drawing call is fine.
   const drawing = new Proxy({}, { get: () => () => {}, set: () => true });
   const saved = globalThis.document;

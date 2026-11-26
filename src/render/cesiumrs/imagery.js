@@ -43,7 +43,9 @@ class MissingTile extends Error {
 
 /** Build a tile URL for an `xyz` spec. */
 function xyzTileUrl(spec, { x, y, level }) {
-  const subdomains = spec.subdomains?.length ? spec.subdomains : ['a', 'b', 'c'];
+  const subdomains = spec.subdomains?.length
+    ? spec.subdomains
+    : ['a', 'b', 'c'];
   // Both WebMercator (1x1 at L0) and default Geographic (2x1 at L0) have 2^level Y rows.
   const rows = 1 << level;
   return spec.url
@@ -277,7 +279,9 @@ function createTileVideos(limit = VIDEO_CACHE) {
     video.preload = 'auto';
     video.crossOrigin = 'anonymous';
     const loaded = new Promise((resolve, reject) => {
-      video.addEventListener('loadeddata', () => resolve(video), { once: true });
+      video.addEventListener('loadeddata', () => resolve(video), {
+        once: true,
+      });
       video.addEventListener(
         'error',
         () => reject(new Error(`The video tile did not load: ${url}`)),
@@ -499,9 +503,7 @@ export function createCesiumRsImagery(
         if (options.video) {
           const { frame, videos } = options.video;
           const url =
-            spec.kind === 'xyz'
-              ? templateTileUrl(frame.url, tile)
-              : frame.url;
+            spec.kind === 'xyz' ? templateTileUrl(frame.url, tile) : frame.url;
           return await videos.frame(url, frame.fraction ?? 0);
         }
         if (spec.kind === 'vectorStyle') {
@@ -597,7 +599,11 @@ export function createCesiumRsImagery(
     };
   }
 
-  function addWasmLayer(spec, callback, { alpha, show, split, index, onTileset, singleTile }) {
+  function addWasmLayer(
+    spec,
+    callback,
+    { alpha, show, split, index, onTileset, singleTile },
+  ) {
     const rect = spec.rectangle;
     const w = rect ? rect.west : Number.NaN;
     const s = rect ? rect.south : Number.NaN;
@@ -605,8 +611,7 @@ export function createCesiumRsImagery(
     const n = rect ? rect.north : Number.NaN;
     const isSingle = singleTile ?? spec.kind === 'single-image';
     const geographic =
-      spec.tiling === 'geographic' ||
-      (spec.kind === 'canvas' && !spec.tiling);
+      spec.tiling === 'geographic' || (spec.kind === 'canvas' && !spec.tiling);
     const maxLevel =
       spec.kind === 'vectorStyle'
         ? VECTOR_MAX_LEVEL

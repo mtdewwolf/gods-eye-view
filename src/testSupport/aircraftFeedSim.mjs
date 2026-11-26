@@ -9,7 +9,7 @@
  * known path, so where it is drawn, and its trail, can be judged against
  * where it really was.
  */
-import * as Cesium from 'cesium';
+import * as Cesium from './cesiumrsCompat.mjs';
 import { bindRenderer } from '../render/rendererOf.js';
 import { createStubRenderer } from '../render/stub/index.js';
 import { createContactIcons } from '../data/aircraftIconLayer.js';

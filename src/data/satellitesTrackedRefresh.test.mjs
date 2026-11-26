@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import { fromDegrees, vec } from '../geo/index.js';
 import { twoline2satrec } from 'satellite.js';
 import {
   ISS_OVERLAY_SOURCE_OPTIONS,
@@ -111,7 +111,7 @@ test('satellite first update aborts every parallel catalog request', async () =>
 
 test('selected satellite params survive delayed arrival and yield to newer explicit intent', (t) => {
   const point = {
-    pos: Cesium.Cartesian3.fromDegrees(-97.7, 30.2, 420_000),
+    pos: fromDegrees(-97.7, 30.2, 420_000),
     show: true,
     pixelSize: 12,
     color: [1, 0, 0, 1],
@@ -210,7 +210,7 @@ test('a tracked docked cluster consolidates its companions onto one card', () =>
   // consolidate them as secondary info on that card, and suppress only those
   // members — never unrelated satellites that merely happen to be nearby.
   const entity = withEntityRecord({}, { labelModel: { title: 'OLD', details: ['? km'] } });
-  const point = { pos: new Cesium.Cartesian3() };
+  const point = { pos: vec() };
   const viewer = { camera: null, scene: { frameState: { frameNumber: 1 } } };
   let nowMs = Date.UTC(2008, 8, 20, 12, 30);
   // The tracked satellite moves ~7.6 km/s, so neighbours are defined RELATIVE to
@@ -218,7 +218,7 @@ test('a tracked docked cluster consolidates its companions onto one card', () =>
   const near = (metres) => ({
     get pos() {
       const tracked = _trackedFrameCartesianForTest();
-      return new Cesium.Cartesian3(tracked.x + metres, tracked.y, tracked.z);
+      return vec(tracked.x + metres, tracked.y, tracked.z);
     },
   });
 
@@ -267,7 +267,7 @@ test('a tracked docked cluster consolidates its companions onto one card', () =>
 });
 test('satellite pre-render refreshes the tracked altitude on each propagated frame', () => {
   const entity = withEntityRecord({}, { labelModel: { title: 'OLD', details: ['? km'] } });
-  const point = { pos: new Cesium.Cartesian3() };
+  const point = { pos: vec() };
   const viewer = {
     camera: null,
     scene: { frameState: { frameNumber: 1 } },
@@ -308,7 +308,7 @@ test('ISS ambient and tracked lifecycle uses cached host entries with no native 
     clearSource: (...args) => calls.push(['clear', ...args]),
   };
   const point = {
-    pos: Cesium.Cartesian3.fromDegrees(-97.7, 30.2, 420_000),
+    pos: fromDegrees(-97.7, 30.2, 420_000),
     show: true,
     pixelSize: 12,
     color: [1, 0, 0, 1],
@@ -397,7 +397,7 @@ test('ISS ambient and tracked lifecycle uses cached host entries with no native 
 });
 
 test('ISS overlay entry retains the native distance scale and source text', () => {
-  const position = new Cesium.Cartesian3(1, 2, 3);
+  const position = vec(1, 2, 3);
   const entry = createIssOverlayEntry(() => position);
   assert.equal(entry.title, 'ISS');
   assert.equal(entry.position(), position);

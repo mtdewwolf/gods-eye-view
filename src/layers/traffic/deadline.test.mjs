@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as C from 'cesium';
+import * as C from '../../testSupport/cesiumrsCompat.mjs';
 import { createIngestion } from './ingestion.js';
 import { createFlow } from './flow.js';
 import { createRetention } from './retention.js';

@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { claimPointer, releasePointer } from './inputOwnership.js';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import { useBhoteKoshiPanelStore } from '../ui/stores/bhoteKoshiPanel.js';
 import { useImagerySplitStore } from '../ui/stores/imagerySplit.js';
 import { applicationPinia } from '../ui/vueRuntime.js';

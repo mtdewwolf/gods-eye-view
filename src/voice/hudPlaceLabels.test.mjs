@@ -3,7 +3,7 @@
 // view shows a different area.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import { getBasemapLabelContext } from './gevActions.js';
 import { bindFakeCesiumCamera } from '../testSupport/fakeCameraPort.mjs';
 import { fakeSceneQuery } from '../testSupport/fakeCesiumScene.mjs';
