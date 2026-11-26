@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { cameraPoseSignature } from '../cesium/iconOrientation.js';
+import { cameraPoseSignature } from '../../testSupport/cesiumIconOrientation.mjs';
 import { poseSignature } from './poseSignature.js';
 
 const pose = {

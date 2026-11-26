@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 
 import { VEHICLE_TINT_CSS } from '../../data/aircraftClass.js';
 import { layerFeedState } from '../../data/feedState.js';
@@ -24,7 +24,7 @@ import { fromDegrees, toLonLatH } from '../../geo/ellipsoid.js';
 import { inputFor } from '../../input/dispatcher.js';
 import { MISSION_LABEL, fakeInput } from '../../input/testDoubles.mjs';
 import { hexColor } from '../../render/color.js';
-import { fakeCameraPort } from '../../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../../testSupport/neutralCameraPort.mjs';
 import { bindFakeDraw } from '../../testSupport/fakeDrawPort.mjs';
 
 const MAGENTA = hexColor('#ff4fd8');

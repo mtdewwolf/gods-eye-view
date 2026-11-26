@@ -67,19 +67,13 @@ const isAdapter = (file) => file.startsWith('src/render/cesium/');
  * - The conformance page runs the suite on the Cesium adapter's harness
  *   and draws the reference scenes on its scene renderer.
  */
-const ADAPTER_ENTRIES = {
-  'src/app/scene.js': ['src/render/cesium/application.js'],
-  'dev/conformance/main.js': [
-    'src/render/cesium/harness.js',
-    'src/render/cesium/sceneRenderer.js',
-  ],
-};
+const ADAPTER_ENTRIES = {};
 
 /**
  * The entries that load their adapter modules on demand: `import()`, its
  * result awaited and destructured by name, never kept whole or forwarded.
  */
-const DYNAMIC_ENTRIES = new Set(['src/app/scene.js']);
+const DYNAMIC_ENTRIES = new Set();
 
 const git = (...args) =>
   execFileSync('git', args, { cwd: root, encoding: 'utf8' });

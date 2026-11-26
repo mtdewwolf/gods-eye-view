@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { MapStackController } from '../mapStackController.js';
-import '../render/cesium/mapEngine.js';
+import '../testSupport/cesiumMapEngine.mjs';
 import {
   installRenderGovernor,
   uninstallRenderGovernor,

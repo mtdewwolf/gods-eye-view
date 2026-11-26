@@ -30,7 +30,7 @@ function componentFunctionSource(fn) {
     .replace(/\(\s+/g, '(');
 }
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import cctvLayer, {
   CCTV_PROJECTION_OVERLAY_SOURCE_OPTIONS,
   _createCctvProjectionPlaneForTest,

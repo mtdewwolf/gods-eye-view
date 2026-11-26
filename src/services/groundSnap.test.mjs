@@ -141,8 +141,8 @@ test('without a globe port to ask, a snap is a miss', () => {
 });
 
 test('through the Cesium globe port, a streaming tileset the port did not load holds the snap', async () => {
-  const Cesium = await import('cesium');
-  const { createCesiumGlobe } = await import('../render/cesium/globe.js');
+  const Cesium = await import('../testSupport/cesiumrsCompat.mjs');
+  const { createCesiumGlobe } = await import('../testSupport/cesiumGlobe.mjs');
   const tileset = Object.create(Cesium.Cesium3DTileset.prototype);
   Object.defineProperties(tileset, {
     show: { value: true, writable: true },

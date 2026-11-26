@@ -26,11 +26,11 @@
  * - draw: a fake draw port (`fakeDrawPort.mjs`) unless one is given.
  * - canvas: the double's `canvas`, else its scene's.
  */
-import * as Cesium from 'cesium';
+import * as Cesium from './cesiumrsCompat.mjs';
 import { bindRenderer } from '../render/rendererOf.js';
-import { heightsFor } from '../render/cesium/heights.js';
-import { drawHitOf } from '../render/cesium/drawHit.js';
-import { rememberPick } from '../render/cesium/pickMemo.js';
+import { heightsFor } from './cesiumHeights.mjs';
+import { drawHitOf } from './drawHit.mjs';
+import { rememberPick } from './pickMemo.mjs';
 import { fakeDrawPort } from './fakeDrawPort.mjs';
 
 const toCartesian = (p) => new Cesium.Cartesian3(p.x, p.y, p.z);

@@ -8,7 +8,7 @@ import { createApp, nextTick } from 'vue';
 import { createPinia } from 'pinia';
 import { useCelestialRingStore } from './ui/stores/celestialRing.js';
 import CelestialRingView from './ui/views/panels/CelestialRing.vue';
-import * as Cesium from 'cesium';
+import * as Cesium from './testSupport/cesiumrsCompat.mjs';
 import {
   CelestialRing,
   earthDiscScreenRadius,

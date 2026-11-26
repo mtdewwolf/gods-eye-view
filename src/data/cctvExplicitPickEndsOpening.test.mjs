@@ -5,7 +5,7 @@
 // switches the camera away from the one the user chose.
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import { fromDegrees } from '../geo/index.js';
 import cctvLayer, {
   _setCctvCoverageStateForTest,
   _setCctvOverlayHostForTest,
@@ -35,7 +35,7 @@ function record(id, lat, lon) {
     frustumGeometry: null,
     frustumPositions: null,
     probeClampRangeM: null,
-    position: Cesium.Cartesian3.fromDegrees(lon, lat, 100),
+    position: fromDegrees(lon, lat, 100),
   };
 }
 

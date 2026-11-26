@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test, { after, before } from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import {
   ISS_ALPHA_JOINTS,
   ISS_BETA_JOINTS,

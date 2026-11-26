@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import {
   coverageZoom,
   createLineCoverage,
@@ -16,7 +16,6 @@ import {
   streetPorts,
 } from '../../testSupport/streetLevelFakes.mjs';
 import { fakeDrawPort } from '../../testSupport/fakeDrawPort.mjs';
-import { createCesiumDraw } from '../../render/cesium/draw.js';
 import { bindRenderer } from '../../render/rendererOf.js';
 import {
   COLORS,
@@ -775,56 +774,6 @@ test('the selected sequence is drawn and highlighted even past the per-tile cap'
   coverage.highlight('old');
   assert.ok(state.coverage.highlight, 'the selected line is highlighted');
   coverage.clear();
-});
-
-test('on the Cesium renderer the lines drape on terrain and tiles, and the highlight stays on top', async () => {
-  const added = [];
-  const scene = {
-    camera: { positionWC: new Cesium.Cartesian3(2e7, 0, 0) },
-    frameState: { mode: Cesium.SceneMode.SCENE3D },
-    primitives: {
-      add: (primitive) => (added.push(primitive), primitive),
-      remove: (primitive) => {
-        const at = added.indexOf(primitive);
-        if (at >= 0) added.splice(at, 1);
-        return at >= 0;
-      },
-      get length() {
-        return added.length;
-      },
-      get: (i) => added[i],
-    },
-    requestRender() {},
-  };
-  const { port } = createCesiumDraw({
-    scene,
-    report: (error) => assert.fail(error),
-  });
-  const { source, state, coverage, bytes } = setup({ draw: port });
-  state.sequence.selectedId = 'seq-1';
-  coverage.refresh();
-  source.calls[0].resolve(bytes);
-  await settle();
-  const grounds = () => added.map((host) => host.get(host.length - 1));
-  const [tile, highlight] = grounds();
-  assert.equal(state.coverage.lastError, null);
-  assert.equal(added.length, 2, 'the tile, then the highlight over it');
-  assert.ok(tile instanceof Cesium.GroundPolylinePrimitive);
-  assert.equal(tile.classificationType, Cesium.ClassificationType.BOTH);
-  const [instance] = tile.geometryInstances;
-  assert.equal(instance.id.id, `${PICK_PREFIX.sequence}seq-1`);
-  assert.equal(instance.id.meta.pick, `${PICK_PREFIX.sequence}seq-1`);
-  assert.equal(
-    highlight.geometryInstances[0].geometry.width,
-    COVERAGE_TUNING.lineWidthPx + 1,
-  );
-  assert.equal(
-    added.at(-1).drawSetId,
-    state.coverage.highlight.set.id,
-    'drawn last, on top',
-  );
-  coverage.clear();
-  assert.equal(added.length, 0, 'nothing left in the scene');
 });
 
 test('a new selection hands the highlight over; a filter that hides it lets the tiles go back', async () => {

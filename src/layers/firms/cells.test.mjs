@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { createFirmsHeatmapLayer } from '../../data/firmsHeatmap.js';
 import { fakeInput } from '../../input/testDoubles.mjs';
 import { bindRenderer } from '../../render/rendererOf.js';
@@ -8,7 +8,7 @@ import { bindFakeCesiumScene } from '../../testSupport/fakeCesiumScene.mjs';
 import { fakeGlobePort } from '../../testSupport/fakeGlobePort.mjs';
 // Ports built over a viewer of the test's own, with no renderer bound: the
 // adapter's factories load as `./render/cesium/unbound` loads them.
-import '../../render/cesium/unbound.js';
+import '../../testSupport/cesiumUnbound.mjs';
 
 const raw = (lat, lon, frp) => ({
   lat,

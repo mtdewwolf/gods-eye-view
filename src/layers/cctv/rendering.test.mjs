@@ -12,9 +12,9 @@ import {
   LIVE_CAMERA_COLOR,
 } from './policy.js';
 import { isVideoFeedType } from '../../sources/cctvTypes.js';
-import * as Cesium from 'cesium';
+import { fromDegrees, negate, normalize } from '../../geo/index.js';
 import { bindFakeDraw } from '../../testSupport/fakeDrawPort.mjs';
-import { fakeCameraPort } from '../../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../../testSupport/neutralCameraPort.mjs';
 import { bindRenderer } from '../../render/rendererOf.js';
 
 const FOCUS_FACTOR = 0.5;
@@ -237,9 +237,9 @@ test('the obstruction probe casts one ray through the query port', async () => {
 });
 
 test('cards go only where the horizon lets the camera see', () => {
-  const eye = Cesium.Cartesian3.fromDegrees(0, 0, 20_000_000);
-  const front = Cesium.Cartesian3.fromDegrees(0, 0);
-  const back = Cesium.Cartesian3.fromDegrees(180, 0);
+  const eye = fromDegrees(0, 0, 20_000_000);
+  const front = fromDegrees(0, 0);
+  const back = fromDegrees(180, 0);
   const viewer = {};
   const camera = fakeCameraPort({
     pose: { position: { x: eye.x, y: eye.y, z: eye.z } },
@@ -298,11 +298,8 @@ test('the projection tiles are ready only when drawn and settled', () => {
 
 test('a view pass writes only the icons it changes, in one write', () => {
   const viewer = {};
-  const eye = Cesium.Cartesian3.fromDegrees(0, 0, 2000);
-  const down = Cesium.Cartesian3.normalize(
-    Cesium.Cartesian3.negate(eye, new Cesium.Cartesian3()),
-    new Cesium.Cartesian3(),
-  );
+  const eye = fromDegrees(0, 0, 2000);
+  const down = normalize(negate(eye));
   const camera = fakeCameraPort({
     pose: {
       position: { x: eye.x, y: eye.y, z: eye.z },
@@ -319,7 +316,7 @@ test('a view pass writes only the icons it changes, in one write', () => {
     canvas: { clientWidth: 800, clientHeight: 600 },
   });
   const record = (id, lon) => {
-    const p = Cesium.Cartesian3.fromDegrees(lon, 0, 10);
+    const p = fromDegrees(lon, 0, 10);
     return {
       camera: { id, lat: 0, lon },
       position: { x: p.x, y: p.y, z: p.z },

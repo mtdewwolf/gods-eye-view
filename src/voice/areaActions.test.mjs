@@ -10,7 +10,7 @@ import { pointInPreparedArea } from '../data/areaGeometry.js';
 import { presentResult } from './resultDisplay.js';
 import { findAdminCandidates as findBundledAdminCandidates } from '../data/adminBoundaries.js';
 import { bindRenderer } from '../render/rendererOf.js';
-import { fakeCameraPort } from '../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../testSupport/neutralCameraPort.mjs';
 
 const square = (w, s, e, n) => [
   [w, s],

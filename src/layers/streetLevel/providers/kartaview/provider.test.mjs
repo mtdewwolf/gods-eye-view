@@ -415,7 +415,7 @@ test('archived photos are skipped: by the nearest lookup, and by › and ‹', a
 
 /** A stand-in Cesium viewer the cones can draw on; `cones()` lists their photo indexes. */
 async function withCones(t, env) {
-  const Cesium = await import('cesium');
+  const Cesium = await import('../../../../testSupport/cesiumrsCompat.mjs');
   const drawing = new Proxy({}, { get: () => () => {}, set: () => true });
   const saved = globalThis.document;
   globalThis.document = {

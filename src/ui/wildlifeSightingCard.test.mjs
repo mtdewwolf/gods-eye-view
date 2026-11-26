@@ -1,6 +1,6 @@
 import '../testSupport/registerDom.mjs';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import test from 'node:test';
 import { fromDegrees, toLonLatH } from '../geo/ellipsoid.js';
 import { bindWildlifeViewer } from '../testSupport/wildlifeViewer.mjs';

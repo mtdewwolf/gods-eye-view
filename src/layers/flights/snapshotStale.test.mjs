@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import { distance } from '../../geo/index.js';
 import { createFlightSnapshotRenderer } from './snapshotRenderer.js';
 import { createMotion } from './motion.js';
 import { createFlightState } from './state.js';
@@ -141,7 +141,7 @@ test('a cruising contact whose position repeats coasts no further than the stale
   t.mock.timers.tick(300 * SEC);
   h.poll(cruise(200, 100), t0);
   assert.equal(h.history.length, 2);
-  const moved = Cesium.Cartesian3.distance(report, h.history[1].position);
+  const moved = distance(report, h.history[1].position);
   assert.ok(
     moved <= 220 * 300 + 1,
     `the synthetic fix coasted ${moved.toFixed(0)} m`,

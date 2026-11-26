@@ -18,7 +18,7 @@
  * adapter
  * (`nativeClickOf`, src/render/rendererOf.js). The raw forms of these
  * rules, for code that still holds a Cesium pick, are the adapter's
- * (src/render/cesium/nativeClick.js).
+ * (src/testSupport/cesiumNativeClick.mjs).
  */
 
 /** Whether a hit is the map itself, or nothing. */

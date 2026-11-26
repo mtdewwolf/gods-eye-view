@@ -3,7 +3,7 @@
 // spreads outward as it fades, in the detection style's own colour.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import {
   awarenessEchoBracket,
   awarenessEchoColor,

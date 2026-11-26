@@ -14,7 +14,7 @@ import { presentSelectedVessel } from '../../hudReadouts.js';
 import { useHudStore } from '../stores/hud.js';
 import { setLocale, t as t_ } from '../../i18n/index.js';
 import IntelHudView from './IntelHudView.vue';
-import { fakeCameraPort } from '../../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../../testSupport/neutralCameraPort.mjs';
 import { toDegrees as deg } from '../../geo/index.js';
 import { assertSameNode } from '../../testSupport/domAssert.mjs';
 

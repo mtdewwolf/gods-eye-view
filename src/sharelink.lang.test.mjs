@@ -5,21 +5,14 @@ import assert from 'node:assert/strict';
 import { ShareLinkManager } from './sharelink.js';
 import { resolveLocale } from './i18n/locale.js';
 import { persistLocale } from './i18n/index.js';
-import { bindFakeCesiumCamera } from './testSupport/fakeCameraPort.mjs';
+import { createRendererHarness } from './testSupport/rendererHarness.mjs';
 
-function makeManager(href) {
+function makeManager(t, href) {
   globalThis.window = { location: { href, hash: new URL(href).hash } };
   globalThis.history = { replaceState() {} };
-  const viewer = {
-    camera: {
-      changed: { addEventListener() {} },
-      positionCartographic: { latitude: 0, longitude: 0, height: 1000 },
-      heading: 0,
-      pitch: -Math.PI / 2,
-      roll: 0,
-    },
-  };
-  return new ShareLinkManager(bindFakeCesiumCamera(viewer));
+  const scene = createRendererHarness();
+  t.after(() => scene.destroy());
+  return new ShareLinkManager(scene.host);
 }
 
 function installClipboard(writeText) {
@@ -29,12 +22,12 @@ function installClipboard(writeText) {
   });
 }
 
-test('the copied link does not carry the sender ?lang override', async () => {
+test('the copied link does not carry the sender ?lang override', async (t) => {
   let copied = null;
   installClipboard(async (url) => {
     copied = url;
   });
-  const manager = makeManager('https://gev.example/?lang=ru#v=2&lat=10&lon=20');
+  const manager = makeManager(t, 'https://gev.example/?lang=ru#v=2&lat=10&lon=20');
   assert.equal(await manager.copyLink({ nowMs: 1_000_000 }), true);
   const link = new URL(copied);
   assert.equal(link.searchParams.get('lang'), null, `copied link: ${copied}`);

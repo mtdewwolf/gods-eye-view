@@ -13,7 +13,7 @@ import { GLOBE_VIEW } from './locations.js';
 import { projectEarthDiscToViewport } from './celestialRing.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from './testSupport/cesiumrsCompat.mjs';
 import {
   activeCameraMotionId,
   getActiveCameraMotion,

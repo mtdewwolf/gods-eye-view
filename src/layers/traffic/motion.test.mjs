@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as C from 'cesium';
+import * as C from '../../testSupport/cesiumrsCompat.mjs';
 import { createState } from './state.js';
 import { createStyle } from './style.js';
 import { createModel } from './model.js';
@@ -9,7 +9,7 @@ import { DOT_HEIGHT_OFFSET } from './policy.js';
 import { bindRenderer } from '../../render/rendererOf.js';
 import { fakeDrawPort } from '../../testSupport/fakeDrawPort.mjs';
 import { surfaceViewer } from '../../testSupport/fakeSceneSurface.mjs';
-import '../../render/cesium/camera.js';
+import '../../testSupport/cesiumUnbound.mjs';
 import {
   createRetention,
   DOT_CHANGE_BUDGET,

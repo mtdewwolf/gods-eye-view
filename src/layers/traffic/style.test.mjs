@@ -3,7 +3,7 @@
 // colours they always were.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { createStyle } from './style.js';
 import {
   FLOW_BUCKET_COLORS,

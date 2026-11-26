@@ -5,7 +5,7 @@
  * silhouette geometry to know what a label is being read against. The helpers
  * that read the default renderer's scene or camera (`screenProjectedRotation`,
  * `perspectiveProjectedRotation`, `horizonOccluder`, `cameraPoseSignature`)
- * live in `src/render/cesium/iconOrientation.js`; the camera-basis rotation
+ * live in `src/testSupport/cesiumIconOrientation.mjs`; the camera-basis rotation
  * itself is `courseScreenRotation` in `screenRotation.js`.
  *
  * THE ORIENTATION PROBLEM (2026-06-10 playtest): billboards are camera-facing
@@ -51,7 +51,7 @@ const _wgs84OneOverRadii = WGS84.oneOverRadii;
  * ABOVE the ellipsoid the horizon is the tangent silhouette and the test is a
  * genuine ray/ellipsoid hit test: 1 means the view ray through the point misses
  * the planet entirely. Here the function is the exact complement of
- * `horizonOccluder` (`src/render/cesium/iconOrientation.js`) — the occluder asks whether the planet is in FRONT of
+ * `horizonOccluder` (`src/testSupport/cesiumIconOrientation.mjs`) — the occluder asks whether the planet is in FRONT of
  * a point (cull it), this asks whether it is BEHIND (what a screen-space label
  * anchored there is read against). For any point the occluder keeps, a ray that
  * hits the ellipsoid must hit it beyond the point, so the hit/miss test alone

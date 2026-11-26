@@ -1,12 +1,12 @@
 // A translated vessel type is never cut mid-word on the card.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import { vec } from '../geo/index.js';
 import { buildVesselCard, buildSelectedVesselCard } from './aisLiveVessels.js';
 import { displayVesselType } from './vesselLabels.js';
 import { setLocale } from '../i18n/index.js';
 
-const POS = new Cesium.Cartesian3(1, 2, 3);
+const POS = vec(1, 2, 3);
 const rec = (type) => ({
   name: 'X',
   mmsi: '1',

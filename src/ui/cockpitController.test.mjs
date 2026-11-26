@@ -431,7 +431,7 @@ const near = (a, b, eps, what) =>
   );
 
 test('Cockpit places the eye at its aircraft as the Cesium maths did', async () => {
-  const Cesium = await import('cesium');
+  const Cesium = await import('../testSupport/cesiumrsCompat.mjs');
   const env = environment();
   const realNow = performance.now;
   try {
@@ -495,7 +495,7 @@ test('Cockpit places the eye at its aircraft as the Cesium maths did', async () 
 });
 
 test('a grounded Cockpit probes the mesh from the camera and keeps the eye above the floor', async () => {
-  const Cesium = await import('cesium');
+  const Cesium = await import('../testSupport/cesiumrsCompat.mjs');
   const env = environment();
   try {
     // Reported below the apron: the floor lifts the anchor and the eye.

@@ -4,7 +4,7 @@
 // behind when destroyed. Nothing here reads the module's source text.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import { initDrawTool } from './drawTool.js';
 import {
   isPointerFree,

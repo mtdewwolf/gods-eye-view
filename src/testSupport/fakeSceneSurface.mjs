@@ -17,7 +17,7 @@
  * - frame: `on('postRender')` on the scene's `postRender`, when it has one.
  * - capabilities: `sampleHeight` while the scene is `sampleHeightSupported`.
  */
-import * as Cesium from 'cesium';
+import * as Cesium from './cesiumrsCompat.mjs';
 import { bindRenderer } from '../render/rendererOf.js';
 import { fakeDrawPort } from './fakeDrawPort.mjs';
 

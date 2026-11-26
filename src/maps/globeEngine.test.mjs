@@ -102,14 +102,32 @@ const jsonResponse = (body, status = 200) =>
 const ionAnswers = (url) =>
   /assets\/1\/endpoint/.test(url)
     ? jsonResponse({ type: 'TERRAIN', url: 'https://assets.ion.invalid/1/' })
-    : jsonResponse({ type: 'IMAGERY', externalType: 'BING', options: {} });
+    : jsonResponse({
+        type: 'IMAGERY',
+        externalType: 'BING',
+        options: { key: 'key' },
+      });
 
 // Nothing here reaches the network: ion and the keyless terrain answer,
 // offline.
 globalThis.fetch = async (url) =>
   String(url).startsWith('https://api.cesium.com/')
     ? ionAnswers(String(url))
-    : bytesResponse([1]);
+    : String(url).includes('/Metadata/')
+      ? jsonResponse({
+          resourceSets: [
+            {
+              resources: [
+                {
+                  imageUrl: 'https://{subdomain}.example/{quadkey}',
+                  imageUrlSubdomains: ['t0'],
+                  zoomMax: 19,
+                },
+              ],
+            },
+          ],
+        })
+      : bytesResponse([1]);
 
 test('Esri goes to its deepest level, its no-imagery picture drawn from the parent', async () => {
   const spec = engine.imagery.esri();
@@ -199,10 +217,49 @@ test('terrain is the port’s world terrain, or the keyless quantized mesh witho
     { kind: 'quantizedMesh', url: KEYLESS_TERRAIN_URL },
   ]);
   await assert.rejects(engine.imagery.ion(2, ''), /token/);
-  assert.deepEqual(await engine.imagery.ion(3, 'token'), {
-    kind: 'world',
-    worldStyle: 'aerialLabels',
-  });
+  assert.equal((await engine.imagery.ion(3, 'token')).kind, 'xyz');
+});
+
+test('ion imagery fetches Bing tiles using the endpoint credentials', async () => {
+  await withFetch(
+    (url) => {
+      if (url.includes('/endpoint?'))
+        return jsonResponse({
+          type: 'IMAGERY',
+          externalType: 'BING',
+          options: {
+            url: 'https://bing.example/',
+            key: 'bing-key',
+            mapStyle: 'Aerial',
+          },
+        });
+      if (url.includes('/Metadata/'))
+        return jsonResponse({
+          resourceSets: [
+            {
+              resources: [
+                {
+                  imageUrl:
+                    'https://{subdomain}.tiles.example/{quadkey}?culture={culture}',
+                  imageUrlSubdomains: ['t0', 't1'],
+                  zoomMax: 19,
+                  imageWidth: 256,
+                },
+              ],
+            },
+          ],
+        });
+      return bytesResponse([4, 5]);
+    },
+    async (asked) => {
+      const spec = await engine.imagery.ion(2, 'ion-token');
+      const answer = await spec.fetchTile({ tile: { x: 1, y: 2, level: 2 } });
+      assert.deepEqual([...new Uint8Array(answer.bytes)], [4, 5]);
+      assert.match(asked[1], /Metadata\/Aerial\?/);
+      assert.match(asked[1], /key=bing-key/);
+      assert.match(asked[2], /\/21\?/);
+    },
+  );
 });
 
 test('a token ion refuses refuses the switch with ion’s message, as Cesium’s own route did', async () => {

@@ -1,5 +1,5 @@
 /** Shared Street Level test stand-ins: provider snapshot and provider, Mapillary source, photo viewer, Cesium viewer, ray-casting camera. */
-import * as Cesium from 'cesium';
+import * as Cesium from './cesiumrsCompat.mjs';
 import { bindFakeCesiumCamera } from './fakeCameraPort.mjs';
 import { fakeDrawPort } from './fakeDrawPort.mjs';
 import { bindRenderer } from '../render/rendererOf.js';

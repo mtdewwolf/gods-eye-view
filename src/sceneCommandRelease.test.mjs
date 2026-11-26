@@ -49,7 +49,7 @@ test('a layer disable renders one frame and trims after it', () => {
 });
 
 test('on the frame port the trim runs once, after the frame, beside other listeners', async () => {
-  const { listenerList } = await import('./render/cesium/common.js');
+  const { listenerList } = await import('./testSupport/cesiumCommon.mjs');
   const postRender = listenerList((error) => {
     throw error;
   });

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import { followViewFrom, keptViewFrom } from './trackedCamera.js';
 import { followFramingEye } from '../render/camera/followTransition.js';
 import {
@@ -13,7 +13,7 @@ import {
   normalize,
   scale,
 } from '../geo/index.js';
-import { clampFollowEye as clampTrackedCameraPosition } from '../render/cesium/follow.js';
+import { clampFollowEye as clampTrackedCameraPosition } from '../testSupport/cesiumFollow.mjs';
 
 test('tracked camera origin crossing returns to the prior side at the minimum range', () => {
   const camera = {

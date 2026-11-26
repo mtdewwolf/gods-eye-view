@@ -4,7 +4,7 @@ import { createLibraryViewLayer } from './layers.js';
 import { libraryEntry } from './catalog.js';
 import { fromDegrees } from '../geo/ellipsoid.js';
 import { bindFakeDraw } from '../testSupport/fakeDrawPort.mjs';
-import { fakeCameraPort } from '../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../testSupport/neutralCameraPort.mjs';
 
 const entry = libraryEntry('fema-usa-structures');
 

@@ -2,7 +2,7 @@ import { createReferentRegistry } from './referents.js';
 import { createStandalonePlaceSearch } from '../standalone/placeSearch.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import { fromDegrees } from '../geo/index.js';
 import { CCTV_FOCUS_RESULT } from '../data/cctv.js';
 import {

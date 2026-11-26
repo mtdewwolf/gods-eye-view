@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import { fromDegrees } from '../geo/index.js';
 import { routePlausible } from './routePlausible.js';
 import { createTracking } from '../layers/flights/tracking.js';
 
@@ -24,15 +24,25 @@ const plausible = (position, origin = SFO, destination = LAX) =>
 // Independent spherical oracle: native unit-vector angular distances, without
 // the production bearing/cross-track/along-track calculations.
 const unit = ({ lat, lon }) => {
-  const latitude = Cesium.Math.toRadians(lat);
-  const longitude = Cesium.Math.toRadians(lon);
-  return new Cesium.Cartesian3(
+  const latitude = (lat * Math.PI) / 180;
+  const longitude = (lon * Math.PI) / 180;
+  return [
     Math.cos(latitude) * Math.cos(longitude),
     Math.cos(latitude) * Math.sin(longitude),
     Math.sin(latitude),
-  );
+  ];
 };
-const angle = (a, b) => Cesium.Cartesian3.angleBetween(unit(a), unit(b));
+const angle = (a, b) => {
+  const u = unit(a);
+  const v = unit(b);
+  const cross = [
+    u[1] * v[2] - u[2] * v[1],
+    u[2] * v[0] - u[0] * v[2],
+    u[0] * v[1] - u[1] * v[0],
+  ];
+  const dot = u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
+  return Math.atan2(Math.hypot(...cross), dot);
+};
 const excess = (position, origin, destination) =>
   angle(origin, position) +
   angle(position, destination) -
@@ -119,7 +129,7 @@ test('the actual native tracked label hides the wrong leg and keeps a healthy ro
   const flightState = {
     records: { data: new Map(), missingPolls: new Map() },
     feed: { _backoff: false },
-    _scratchCarto: new Cesium.Cartographic(),
+    _scratchCarto: {},
   };
   // Where each contact's icon is drawn.
   const drawn = new Map();
@@ -157,10 +167,7 @@ test('the actual native tracked label hides the wrong leg and keeps a healthy ro
       verticalRate: 0,
       route,
     });
-    drawn.set(
-      id,
-      Cesium.Cartesian3.fromDegrees(position.lon, position.lat, 10000),
-    );
+    drawn.set(id, fromDegrees(position.lon, position.lat, 10000));
     assert.equal(
       tracking._trackedLabelText(id).includes('SFO → LAX'),
       expected,

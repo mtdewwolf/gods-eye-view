@@ -4,13 +4,24 @@
 // that does not read the list.
 import { afterEach, beforeEach, test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import {
+  add,
+  cross,
+  distance,
+  fromDegrees,
+  negate,
+  normalize,
+  scale,
+  sub,
+  toCartographicRadians,
+  toDegrees,
+} from '../geo/index.js';
 import { CAMERA_GREEN, COUNT_CAMERA_ICON } from '../layers/cctv/policy.js';
 import { fakeDrawPort } from '../testSupport/fakeDrawPort.mjs';
 import { createCameraCell } from './cctvCellCounts.js';
 import { bindRenderer, findCamera } from '../render/rendererOf.js';
 import { DEFAULT_FOCUS_DEEMPHASIS_PARAMS } from './focusDeemphasis.js';
-import { fakeCameraPort } from '../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../testSupport/neutralCameraPort.mjs';
 import cctvLayer, {
   _cctvIconsForTest,
   focusCctvRecord,
@@ -30,7 +41,7 @@ const HEIGHT = 600;
 /** Records at the given [lon, lat] degrees near the origin. */
 function recordsAt(lonLats) {
   const records = lonLats.map(([lon, lat], index) => {
-    const position = Cesium.Cartesian3.fromDegrees(lon, lat, 10);
+    const position = fromDegrees(lon, lat, 10);
     return {
       camera: {
         id: `cam-${index}`,
@@ -59,13 +70,10 @@ function recordsAt(lonLats) {
  * cameras from its pose.
  */
 function poseAt(heightM, lonDeg) {
-  const eye = Cesium.Cartesian3.fromDegrees(lonDeg, 0, heightM);
-  const down = Cesium.Cartesian3.normalize(
-    Cesium.Cartesian3.negate(eye, new Cesium.Cartesian3()),
-    new Cesium.Cartesian3(),
-  );
+  const eye = fromDegrees(lonDeg, 0, heightM);
+  const down = normalize(negate(eye));
   const north = { x: 0, y: 0, z: 1 };
-  const right = Cesium.Cartesian3.cross(down, north, new Cesium.Cartesian3());
+  const right = cross(down, north);
   return {
     lon: lonDeg,
     lat: 0,
@@ -365,8 +373,7 @@ test('cameras the height batch never answered for take the drawn terrain', () =>
       },
     },
   };
-  const heightOf = (position) =>
-    Cesium.Cartographic.fromCartesian(position).height;
+  const heightOf = (position) => toCartographicRadians(position).height;
   const icon = (i) => _cctvIconsForTest().item(records[i].camera.id);
   seedCoverage({ viewer: viewerAt(20_000, 0, flights, ports), records });
 
@@ -427,17 +434,11 @@ test('a tilted view keeps the count of cameras that stood under the terrain', ()
     [0, 0],
   ]);
   const ground = 1872;
-  const eye = Cesium.Cartesian3.fromDegrees(0, -0.009, ground + 200);
-  const target = Cesium.Cartesian3.fromDegrees(0, 0, ground);
-  const direction = Cesium.Cartesian3.normalize(
-    Cesium.Cartesian3.subtract(target, eye, new Cesium.Cartesian3()),
-    new Cesium.Cartesian3(),
-  );
-  const right = Cesium.Cartesian3.normalize(
-    Cesium.Cartesian3.cross(direction, eye, new Cesium.Cartesian3()),
-    new Cesium.Cartesian3(),
-  );
-  const up = Cesium.Cartesian3.cross(right, direction, new Cesium.Cartesian3());
+  const eye = fromDegrees(0, -0.009, ground + 200);
+  const target = fromDegrees(0, 0, ground);
+  const direction = normalize(sub(target, eye));
+  const right = normalize(cross(direction, eye));
+  const up = cross(right, direction);
   const plain = ({ x, y, z }) => ({ x, y, z });
   const { port } = fakeCameraPort({
     pose: {
@@ -488,21 +489,19 @@ test('cameras on one mount draw side by side once they show as icons', () => {
   const icons = _cctvIconsForTest();
   const [a, b, c] = records.map((record) => icons.item(record.camera.id).pos);
   // 30 px apart along the screen's horizontal, centred on the shared mount.
-  const metres = Cesium.Cartesian3.distance(a, b);
+  const metres = distance(a, b);
   const metresPerPixel = ((2 * Math.tan(Math.PI / 6)) / HEIGHT) * 450;
   assert.ok(Math.abs(metres / metresPerPixel - 30) < 0.5);
-  const middle = Cesium.Cartesian3.midpoint(a, b, new Cesium.Cartesian3());
-  assert.ok(Cesium.Cartesian3.distance(middle, records[0].position) < 1e-6);
+  const middle = scale(add(a, b), 0.5);
+  assert.ok(distance(middle, records[0].position) < 1e-6);
   // The third camera, 11 m away, has a mount of its own.
-  assert.ok(Cesium.Cartesian3.distance(c, records[2].position) < 1e-6);
+  assert.ok(distance(c, records[2].position) < 1e-6);
   // The records keep the mount; callouts follow the drawn icons.
-  assert.ok(
-    Cesium.Cartesian3.distance(records[0].position, records[1].position) < 1e-9,
-  );
+  assert.ok(distance(records[0].position, records[1].position) < 1e-9);
   const callouts = cctvLayer.getDetectableObjects();
   for (const [i, pos] of [a, b].entries()) {
     const callout = callouts.find((o) => o.sourceId === `cam-${i}`);
-    assert.ok(Cesium.Cartesian3.distance(callout.position, pos) < 1e-9);
+    assert.ok(distance(callout.position, pos) < 1e-9);
   }
   // An unchanged view writes nothing more.
   const before = [a, b];
@@ -516,10 +515,8 @@ test('cameras on one mount draw side by side once they show as icons', () => {
   assert.deepEqual(shownIds(records), []);
   for (const i of [0, 1])
     assert.ok(
-      Cesium.Cartesian3.distance(
-        _cctvIconsForTest().item(`cam-${i}`).pos,
-        records[i].position,
-      ) < 1e-6,
+      distance(_cctvIconsForTest().item(`cam-${i}`).pos, records[i].position) <
+        1e-6,
     );
 });
 
@@ -578,8 +575,8 @@ test('the picker prefers the healthy camera and the marker stays at the mean', (
     );
     const { pos, height } = markers()[0];
     assert.equal(height, 40);
-    const center = Cesium.Cartesian3.fromDegrees(0.0005, 0, 10);
-    assert.ok(Cesium.Cartesian3.distance(pos, center) < 0.02);
+    const center = fromDegrees(0.0005, 0, 10);
+    assert.ok(distance(pos, center) < 0.02);
     if (first) assert.deepEqual(pos, first);
     first = pos;
     records.reverse();
@@ -716,7 +713,7 @@ test('only members on the near side of the horizon count', () => {
   const viewer = {};
   const { port } = fakeCameraPort({
     pose: {
-      position: Cesium.Cartesian3.fromDegrees(0, 0, 20_000),
+      position: fromDegrees(0, 0, 20_000),
       fovy: undefined,
     },
   });
@@ -766,18 +763,12 @@ test('a count click frames its members and preserves an explicit camera choice',
     assert.equal(flights.length, 1);
     const { bounds, options } = flights[0];
     for (const record of records.slice(0, 2))
-      assert.ok(
-        bounds.radius >
-          Cesium.Cartesian3.distance(bounds.center, record.position),
-      );
+      assert.ok(bounds.radius > distance(bounds.center, record.position));
     const range = options.offset.range;
     assert.ok(range > 0 && range < 10_000);
     // Run the same view pass at the requested destination.
-    const center = Cesium.Cartographic.fromCartesian(bounds.center);
-    const destination = viewerAt(
-      center.height + range,
-      Cesium.Math.toDegrees(center.longitude),
-    );
+    const center = toCartographicRadians(bounds.center);
+    const destination = viewerAt(center.height + range, toDegrees(center.lon));
     assert.equal(reopenNearestCamera(), false);
     assert.equal(cctvLayer.getUIState().activeCameraId, 'cam-2');
     seedCoverage({
@@ -819,7 +810,7 @@ test('coverage leaves grouped neighbors and returns when their icons separate', 
     [true, false, false],
   );
   records[1].camera.lon = 0.05;
-  records[1].position = Cesium.Cartesian3.fromDegrees(0.05, 0, 10);
+  records[1].position = fromDegrees(0.05, 0, 10);
   refreshHorizonCulling();
   assert.deepEqual(
     records.map((r) => r.coverageEntities[0].show),
@@ -855,7 +846,7 @@ test('a dimmed count keeps its alpha when its cell changes and recovers on relea
 
   const record = records[0];
   record.camera.lon += 2 / 111_320;
-  record.position = Cesium.Cartesian3.fromDegrees(
+  record.position = fromDegrees(
     record.camera.lon,
     record.camera.lat,
     record.camera.absoluteHeightM,
@@ -909,10 +900,7 @@ test('overlapping cells merge at their weighted centre and keep every camera in 
     );
     const merged = shown.find((m) => m.cell.count === 6);
     assert.ok(
-      Cesium.Cartesian3.distance(
-        merged.pos,
-        Cesium.Cartesian3.fromDegrees(0.004 / 6, -0.001 / 6, 10),
-      ) < 0.01,
+      distance(merged.pos, fromDegrees(0.004 / 6, -0.001 / 6, 10)) < 0.01,
     );
     const positions = shown.map((m) => [m.cell.key, m.pos, m.height, m.width]);
     if (previous) assert.deepEqual(positions, previous);
@@ -921,8 +909,7 @@ test('overlapping cells merge at their weighted centre and keep every camera in 
     const { bounds } = flights.at(-1);
     assert.ok(
       [...records.slice(0, 5), records[8]].every(
-        (r) =>
-          Cesium.Cartesian3.distance(r.position, bounds.center) < bounds.radius,
+        (r) => distance(r.position, bounds.center) < bounds.radius,
       ),
     );
     assert.ok(
@@ -1209,10 +1196,7 @@ test('cameras less than a metre apart spread even across a rounding boundary', (
   refreshHorizonCulling();
   const icons = _cctvIconsForTest();
   const metresPerPixel = ((2 * Math.tan(Math.PI / 6)) / HEIGHT) * 450;
-  const apart = Cesium.Cartesian3.distance(
-    icons.item('cam-0').pos,
-    icons.item('cam-1').pos,
-  );
+  const apart = distance(icons.item('cam-0').pos, icons.item('cam-1').pos);
   assert.ok(Math.abs(apart / metresPerPixel - 30) < 0.5);
 });
 
@@ -1290,9 +1274,7 @@ test('a camera with geometry takes the drawn terrain once, after the pass that r
   await Promise.resolve();
   assert.equal(record.groundPrior.source, 'drawn-terrain');
   for (const pos of [record.position, _cctvIconsForTest().item('cam-0').pos])
-    assert.ok(
-      Math.abs(Cesium.Cartographic.fromCartesian(pos).height - 1880) < 0.01,
-    );
+    assert.ok(Math.abs(toCartographicRadians(pos).height - 1880) < 0.01);
 });
 
 /** Painted centre of a count marker in CSS px. */
@@ -1315,24 +1297,18 @@ test('building geometry for spread mount mates keeps their icons beside the moun
   });
   refreshHorizonCulling();
   const icons = _cctvIconsForTest();
-  const before = Cesium.Cartesian3.distance(
-    icons.item('cam-0').pos,
-    icons.item('cam-1').pos,
-  );
+  const before = distance(icons.item('cam-0').pos, icons.item('cam-1').pos);
 
   assert.ok(before > 10);
   refreshCoverageStyles();
 
-  const after = Cesium.Cartesian3.distance(
-    icons.item('cam-0').pos,
-    icons.item('cam-1').pos,
-  );
+  const after = distance(icons.item('cam-0').pos, icons.item('cam-1').pos);
   const callouts = cctvLayer.getDetectableObjects();
   const ca = callouts.find((o) => o.sourceId === 'cam-0').position;
 
   assert.ok(after > 10, 'icons stay side by side after geometry is built');
   assert.ok(
-    Cesium.Cartesian3.distance(icons.item('cam-0').pos, ca) < 1e-6,
+    distance(icons.item('cam-0').pos, ca) < 1e-6,
     'icon and callout agree',
   );
 });
@@ -1397,12 +1373,12 @@ test('each click on a long dense chain flies closer than the last', () => {
   };
   clickAt(marker);
   const first = flights.at(-1);
-  const c1 = Cesium.Cartographic.fromCartesian(first.bounds.center);
+  const c1 = toCartographicRadians(first.bounds.center);
 
   seedCoverage({
     viewer: viewerAt(
       c1.height + first.options.offset.range,
-      Cesium.Math.toDegrees(c1.longitude),
+      toDegrees(c1.lon),
       flights,
     ),
     records,
@@ -1452,7 +1428,7 @@ test('an unresolved batch result takes the drawn terrain', () => {
   };
   seedCoverage({ viewer: viewerAt(20_000, 0, [], ports), records });
   refreshHorizonCulling();
-  const h = (r) => Cesium.Cartographic.fromCartesian(r.position).height;
+  const h = (r) => toCartographicRadians(r.position).height;
 
   assert.ok(
     Math.abs(h(records[0]) - 1880) < 0.01,
@@ -1465,10 +1441,7 @@ const metresPerPixel = ((2 * Math.tan(Math.PI / 6)) / HEIGHT) * 450;
 const separationPx = () => {
   const icons = _cctvIconsForTest();
   return (
-    Cesium.Cartesian3.distance(
-      icons.item('cam-0').pos,
-      icons.item('cam-1').pos,
-    ) / metresPerPixel
+    distance(icons.item('cam-0').pos, icons.item('cam-1').pos) / metresPerPixel
   );
 };
 

@@ -1,7 +1,7 @@
 import '../testSupport/registerDom.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import { installViews } from './embed.js';
 import { createGevActionRunner } from '../voice/gevActions.js';
 import { createAnnotationEngine } from '../annotations/annotationEngine.js';

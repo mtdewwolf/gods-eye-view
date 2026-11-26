@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import {
   HORIZON_FEATHER_RAD,
   skyBackdropFactor,
@@ -9,7 +9,7 @@ import {
 import {
   horizonOccluder,
   screenProjectedRotation,
-} from '../render/cesium/iconOrientation.js';
+} from '../testSupport/cesiumIconOrientation.mjs';
 
 const equatorPosition = Cesium.Cartesian3.fromDegrees(0, 0, 0);
 
@@ -565,7 +565,7 @@ import {
   PERSPECTIVE_BLEND_MIN_PX,
   PERSPECTIVE_PROBE_M,
   perspectiveProjectedRotation,
-} from '../render/cesium/iconOrientation.js';
+} from '../testSupport/cesiumIconOrientation.mjs';
 
 /**
  * A scene the exact projector accepts: 3D mode, a canvas, and a camera with a

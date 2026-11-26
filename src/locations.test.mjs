@@ -7,7 +7,7 @@ import { createStandalonePlaceSearch } from './standalone/placeSearch.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import * as Cesium from 'cesium';
+import * as Cesium from './testSupport/cesiumrsCompat.mjs';
 import {
   CANCELLED_SEARCH,
   placeFramingViewport,

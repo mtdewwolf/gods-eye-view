@@ -3,7 +3,7 @@ import { readShellSource } from '../testSupport/readShellSource.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import {
   countFadingRenderEntries,
   destroyDetection,
@@ -42,8 +42,8 @@ import {
   createFakeGl,
   depthImage,
   viewDistanceToDepth,
-} from '../render/cesium/fixtures/fakeDepthScene.mjs';
-import { createSceneOcclusionTest } from '../render/cesium/sceneOcclusionProbe.js';
+} from '../testSupport/fixtures/fakeDepthScene.mjs';
+import { createSceneOcclusionTest } from '../testSupport/cesiumSceneOcclusionProbe.mjs';
 import { rendererOf } from '../render/rendererOf.js';
 
 test('detection diagnostics count rendered fading rows instead of absent selected identities', () => {

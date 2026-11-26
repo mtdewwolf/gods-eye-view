@@ -25,7 +25,7 @@ import {
   getRenderGovernorDiagnostics,
   installRenderGovernor,
 } from '../renderGovernor.js';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import { registerEntityContext, selectEntityContext, getSelectedEntityContext, clearSelectedEntityContextForLayer } from './contextStore.js';
 import { readEntityRecord } from './entityRecords.js';
 import { drawOf } from '../render/rendererOf.js';

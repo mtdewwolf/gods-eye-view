@@ -127,8 +127,10 @@ export async function checkPackageBoundaries(root) {
         rollupOptions: {
           input,
           // A declared dependency also owns its package subpath exports
-          // (for example `@jtarrio/webrtlsdr/rtlsdr.js`).
+          // (for example `@jtarrio/webrtlsdr/rtlsdr.js`). `cesium-rs-browser`
+          // is resolved by Vite's build alias to the sibling CesiumRS WASM build.
           external: (id) =>
+            id === 'cesium-rs-browser' ||
             group.external.some(
               (name) => id === name || id.startsWith(`${name}/`),
             ),

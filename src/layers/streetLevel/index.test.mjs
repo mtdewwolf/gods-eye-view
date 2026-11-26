@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { getEventListeners } from 'node:events';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { bindFakeCesiumCamera } from '../../testSupport/fakeCameraPort.mjs';
 import { createStreetLevelLayer } from './index.js';
 import { MAPILLARY_CREDIT_HTML } from './providers/mapillary/policy.js';

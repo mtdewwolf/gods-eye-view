@@ -19,7 +19,7 @@ import {
   depthImage,
   packDepth,
   viewDistanceToDepth,
-} from '../render/cesium/fixtures/fakeDepthScene.mjs';
+} from '../testSupport/fixtures/fakeDepthScene.mjs';
 
 test('the margin is 3 m near the camera and 2% of the range beyond 150 m', () => {
   assert.equal(surfaceOcclusionMargin(10), SURFACE_OCCLUSION_MIN_MARGIN_M);

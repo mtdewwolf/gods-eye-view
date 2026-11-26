@@ -1,5 +1,6 @@
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import cesium from 'vite-plugin-cesium';
 import vue from '@vitejs/plugin-vue';
 import { VUE_PLUGIN_OPTIONS } from './vueOptions.js';
 import { DEFAULT_ALLOWED_HOSTS, hostCheckPlugin } from './allowedHosts.js';
@@ -24,6 +25,14 @@ export function escapeFsDenyPath(path) {
 }
 
 const REPO_ROOT_GLOB = escapeFsDenyPath(REPO_ROOT);
+
+const CESIUMRS_BROWSER_DIR = path.resolve(
+  process.env.CESIUMRS_BROWSER_DIR ||
+    path.join(REPO_ROOT, 'vendor', 'cesiumrs-browser'),
+);
+const HAS_CESIUMRS_BROWSER = existsSync(
+  path.join(CESIUMRS_BROWSER_DIR, 'cesium_rs.js'),
+);
 
 /**
  * Browser-safe form of the optional Photon endpoint build input. Only https
@@ -185,7 +194,6 @@ export function createBrowserViteConfig({
       apiResponseHeadersPlugin(),
       // Next, so no provider route answers a Host the server does not allow.
       hostCheckPlugin(),
-      cesium(),
       // Application views are Vue single-file components.
       vue(VUE_PLUGIN_OPTIONS),
       ...plugins,
@@ -196,7 +204,20 @@ export function createBrowserViteConfig({
     // A production build must not clean the dependency cache a running dev
     // server is still serving optimized module URLs from.
     ...(command === 'build' ? { cacheDir: 'node_modules/.vite-build' } : {}),
+    ...(HAS_CESIUMRS_BROWSER
+      ? {
+          resolve: {
+            alias: {
+              'cesium-rs-browser': path.join(
+                CESIUMRS_BROWSER_DIR,
+                'cesium_rs.js',
+              ),
+            },
+          },
+        }
+      : {}),
     optimizeDeps: {
+      ...(HAS_CESIUMRS_BROWSER ? { exclude: ['cesium-rs-browser'] } : {}),
       // First reached through the SDR worker or a dynamic import. Pre-bundle
       // them at startup so first use cannot invalidate already-transformed
       // URLs with Vite's "Outdated Optimize Dep" 504 response.
@@ -217,6 +238,10 @@ export function createBrowserViteConfig({
       // build/allowedHosts.js); IP addresses are always accepted.
       allowedHosts: [...allowedHosts],
       fs: {
+        allow: [
+          REPO_ROOT,
+          ...(HAS_CESIUMRS_BROWSER ? [CESIUMRS_BROWSER_DIR] : []),
+        ],
         deny: [
           '.env',
           '.env.*',

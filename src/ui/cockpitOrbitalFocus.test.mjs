@@ -11,7 +11,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createPinia } from 'pinia';
 import { createApp, defineComponent, h, nextTick } from 'vue';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import {
   bindFakeCesiumCamera,
   followEntity,

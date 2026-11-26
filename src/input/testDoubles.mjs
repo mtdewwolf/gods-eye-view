@@ -10,10 +10,10 @@
  * viewer double's own `scene.pick` and `drillPick`, read as the renderer's
  * picks are.
  */
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 // The adapter's unbound input port and a click's own Cesium picks.
-import '../render/cesium/input.js';
-import '../render/cesium/nativeClick.js';
+import '../testSupport/cesiumInput.mjs';
+import '../testSupport/cesiumNativeClick.mjs';
 import { rendererOf } from '../render/rendererOf.js';
 import { fakeScenePicks } from '../testSupport/fakeCesiumScene.mjs';
 import { provideStyleStageAlias } from '../styles/styleStages.js';

@@ -5,7 +5,7 @@ import {
   createFakeGl,
   rawDepthImage,
   viewDistanceToDepth,
-} from '../cesium/fixtures/fakeDepthScene.mjs';
+} from '../../testSupport/fixtures/fakeDepthScene.mjs';
 
 const FAR = 100_000;
 const WIDTH = 64;

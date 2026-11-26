@@ -6,7 +6,7 @@ import { readStylesheet } from '../testSupport/readStylesheet.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import {
   getKeyholeGeometry,
   keyholeLabelAlphaFromGeometry,

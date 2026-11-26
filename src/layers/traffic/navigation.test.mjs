@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { createTrafficLayer } from './index.js';
 import { findCamera } from '../../render/rendererOf.js';
 import {

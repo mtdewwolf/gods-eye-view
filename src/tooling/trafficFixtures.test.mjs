@@ -60,7 +60,7 @@ test('fixture TileJSON and every road/flow request stay on intercepted sources',
 
 test('flat terrain fixture decodes through Cesium and advertises no network children', async () => {
   const { createServer } = await import('node:http');
-  const { CesiumTerrainProvider } = await import('cesium');
+  const { CesiumTerrainProvider } = await import('../testSupport/cesiumrsCompat.mjs');
   const server = createServer((req, res) => {
     const response = trafficFixtureResponse({
       url: () => `https://terrain.reearth.land${req.url}`,

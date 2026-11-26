@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { createGroundClick, groundClickHeightOk } from './groundClick.js';
 import * as scenePick from '../../data/scenePick.js';
 import { pickGroundPosition } from '../../input/dispatcher.js';

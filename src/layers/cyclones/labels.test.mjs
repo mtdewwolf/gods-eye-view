@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import { fromDegrees } from '../../geo/index.js';
 import {
   CYCLONE_LEAD_LABEL_MAX_DISTANCE_M,
   CYCLONE_OVERLAY_COHORT_LIMIT,
@@ -16,8 +16,7 @@ import {
 } from '../../overlays/worldOverlay.js';
 import { distanceFade } from '../../overlays/worldOverlayDraw.js';
 
-const anchor = (longitude, latitude) =>
-  Cesium.Cartesian3.fromDegrees(longitude, latitude, 0);
+const anchor = (longitude, latitude) => fromDegrees(longitude, latitude, 0);
 const storms = () => [
   {
     id: 'al062026',

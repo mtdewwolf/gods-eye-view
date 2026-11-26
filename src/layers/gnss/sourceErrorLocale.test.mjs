@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { setLocale } from '../../i18n/index.js';
 import { createGnssIntegrityLayer } from './index.js';
-import { fakeCameraPort } from '../../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../../testSupport/neutralCameraPort.mjs';
 import { bindFakeDraw } from '../../testSupport/fakeDrawPort.mjs';
 
 async function failedLayer(message) {

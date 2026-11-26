@@ -1,5 +1,5 @@
-import * as Cesium from 'cesium';
-import { createCesiumFields } from '../../render/cesium/drawFields.js';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
+import { createCesiumFields } from '../../testSupport/cesiumDrawFields.mjs';
 import { bindRenderer } from '../../render/rendererOf.js';
 
 /** Test double for the Cesium classes a weather shell constructs. */

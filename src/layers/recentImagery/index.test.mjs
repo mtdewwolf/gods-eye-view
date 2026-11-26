@@ -1,5 +1,5 @@
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import assert from 'node:assert/strict';
 import { until } from '../../testSupport/kartaViewFakes.mjs';
 import { createRecentImagerySource } from './source.js';
@@ -8,7 +8,7 @@ import { boxKey, nonCrossingBoxes } from './model.js';
 import { NO_IMAGERY_HOST } from '../../maps/imageryHost.js';
 import { acquireImageryComparison } from '../../maps/imageryComparison.js';
 import { MapSourceController } from '../../maps/controller.js';
-import '../../render/cesium/mapEngine.js';
+import '../../testSupport/cesiumMapEngine.mjs';
 import { createDefaultMapSources } from '../../maps/defaultSources.js';
 import { resetPointerOwnership } from '../../data/inputOwnership.js';
 import { initImageryBoxTool } from '../../ui/imageryBoxTool.js';

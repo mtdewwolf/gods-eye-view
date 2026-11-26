@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import { createGoogleTokenSource } from './maps/googleTokens.js';
 import { selectMapStartupRoute } from './mapStartup.js';
-import { loadPhotorealisticTileset } from './render/cesium/google3d.js';
+import { loadPhotorealisticTileset } from '././testSupport/cesiumGoogle3d.mjs';
 
 function fakeCesium(outcomes = []) {
   const calls = [];

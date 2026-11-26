@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { KEY_SETUP_KEYS } from '../../keySetupCore.mjs';
 import { fromDegrees } from '../../geo/ellipsoid.js';
 import { bindFakeDraw } from '../../testSupport/fakeDrawPort.mjs';
-import { fakeCameraPort } from '../../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../../testSupport/neutralCameraPort.mjs';
 import { NEWS_KEY_PROVIDERS, createNewsLayer } from './index.js';
 import {
   findPickOwner,

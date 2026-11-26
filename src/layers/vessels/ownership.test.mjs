@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createVesselLayer } from './index.js';
 import { createVesselState } from './state.js';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { createVesselIconBook } from './iconBook.js';
 import { liftedForHorizon } from '../../geo/horizon.js';
 import { bindFakeCesiumCamera } from '../../testSupport/fakeCameraPort.mjs';

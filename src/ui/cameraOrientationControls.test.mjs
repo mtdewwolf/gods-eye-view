@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import {
   OBLIQUE_PITCH,
   STRAIGHT_DOWN_PITCH,
@@ -16,7 +16,7 @@ import { bindRenderer } from '../render/rendererOf.js';
 import {
   createCesiumQuery,
   queryCapabilities,
-} from '../render/cesium/query.js';
+} from '../testSupport/cesiumQuery.mjs';
 import {
   bindFakeCesiumCamera,
   followEntity,

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { createWildlifeSightingsLayer } from './index.js';
 import { layerFeedState } from '../../data/feedState.js';
 import { LayerLifecycle } from '../../data/lifecycle.js';

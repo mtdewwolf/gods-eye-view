@@ -6,7 +6,7 @@ import { readLayerSource } from '../testSupport/readLayerSource.mjs';
 // copied across layers) — and keep the trail and bracket anchors riding the
 // transform chain Cesium draws the models with.
 import { test } from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';

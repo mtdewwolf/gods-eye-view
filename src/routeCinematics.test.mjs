@@ -11,7 +11,7 @@ import { bindFakeCesiumCamera } from './testSupport/fakeCameraPort.mjs';
 import { bindRenderer } from './render/rendererOf.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import * as Cesium from 'cesium';
+import * as Cesium from './testSupport/cesiumrsCompat.mjs';
 
 import {
   ROUTE_CINEMA,

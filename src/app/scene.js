@@ -31,17 +31,17 @@ let defaultLoad = null;
 
 /**
  * The application's composition root picks the renderer: the one given, else
- * the default (Cesium), loaded only then, so a page on the stub never
- * loads it. This is the only part of an adapter the application imports. A
- * page that starts on the default calls this as it starts, so the renderer
- * loads beside the rest of the page rather than after it.
+ * the default (CesiumRS), loaded only then, so a page on the stub never
+ * loads it. A page that starts on the default calls this as it starts, so the
+ * renderer loads beside the rest of the page rather than after it.
  * @returns {Promise<object>} The default `RendererPlugin`.
  */
 export function loadDefaultRenderer() {
   if (defaultLoad) return defaultLoad;
   const load = (async () => {
-    const { cesiumRenderer } = await import('../render/cesium/application.js');
-    return cesiumRenderer;
+    const { cesiumRsRenderer } =
+      await import('../render/cesiumrs/application.js');
+    return cesiumRsRenderer;
   })();
   defaultLoad = load;
   // A load that failed is tried again by the next call.

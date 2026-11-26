@@ -8,7 +8,7 @@ import { CCTV_OVERLAY_SOURCE_ID } from '../../data/cctvCards.js';
 import { fakeInput, fakeInputUnderLabel } from '../../input/testDoubles.mjs';
 import * as picking from '../../data/pickRegistry.js';
 import { bindRenderer } from '../../render/rendererOf.js';
-import { fakeCameraPort } from '../../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../../testSupport/neutralCameraPort.mjs';
 
 function viewerWithCamera() {
   const camera = fakeCameraPort();

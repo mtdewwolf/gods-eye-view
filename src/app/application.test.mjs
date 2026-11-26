@@ -2,14 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { createApplication } from './application.js';
-import { installTrackpadPinchRelay } from '../render/cesium/ctrlWheelZoom.js';
+import { installTrackpadPinchRelay } from '../testSupport/cesiumCtrlWheelZoom.mjs';
 import { KEYHOLE_OUTER_RADIUS } from '../celestialRing.js';
-import * as Cesium from 'cesium';
-import { installFreeLookHeightLimit } from '../render/cesium/freeLookLimit.js';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
+import { installFreeLookHeightLimit } from '../testSupport/cesiumFreeLookLimit.mjs';
 import { installGlobeInViewRecovery } from './globeInViewRecovery.js';
 import { FREE_LOOK_MAX_HEIGHT_METERS } from '../globeInView.js';
 import * as globeInView from '../globeInView.js';
-import { createCesiumCamera } from '../render/cesium/camera.js';
+import { createCesiumCamera } from '../testSupport/cesiumCamera.mjs';
 import { bindRenderer } from '../render/rendererOf.js';
 import { entityFollowTarget } from '../data/followed.js';
 
@@ -279,25 +279,6 @@ test('different application instances do not share lifecycle state', async () =>
   assert.equal(second.app.getState().status, 'ready');
   assert.equal(second.events.length, 4);
   await second.app.destroy();
-});
-
-test('the separate viewer export imports without constructing a browser viewer', async () => {
-  const { createApplicationViewer } =
-    await import('gods-eye-view/application/viewer');
-  assert.equal(typeof createApplicationViewer, 'function');
-  assert.throws(() => createApplicationViewer({}), /containers are required/);
-});
-
-test('the viewer gets the starry sky as an option, which keeps the Sun and Moon', async () => {
-  const { applicationViewerOptions } =
-    await import('../render/cesium/applicationViewer.js');
-  const { StarrySky } = await import('../render/cesium/starrySky.js');
-  const creditContainer = {};
-  const options = applicationViewerOptions(creditContainer);
-  // CesiumWidget skips scene.sun and scene.moon when skyBox is false.
-  assert.ok(options.skyBox instanceof StarrySky);
-  assert.equal(options.creditContainer, creditContainer);
-  options.skyBox.destroy();
 });
 
 function pinchFixture({ zoomEventTypes } = {}) {

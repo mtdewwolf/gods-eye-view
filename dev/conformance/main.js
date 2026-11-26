@@ -19,11 +19,8 @@ import {
 } from '../../src/render/conformance/visual.js';
 import { createStubHarness } from '../../src/render/stub/harness.js';
 import { toEcef } from '../../src/render/stub/math.js';
-import { createCesiumSceneRenderer } from '../../src/render/cesium/sceneRenderer.js';
-import {
-  CESIUM_CHECKS,
-  createCesiumHarness,
-} from '../../src/render/cesium/harness.js';
+import { createCesiumRsRenderer } from '../../src/render/cesiumrs/renderer.js';
+import { createCesiumRsConformanceHarness } from '../../src/render/cesiumrs/harness.js';
 
 const REFERENCES = '/src/render/conformance/goldens/visual/';
 const SAVE = '/__conformance/references/';
@@ -41,18 +38,23 @@ const $ = (id) => document.getElementById(id);
 const status = (text) => ($('status').textContent = text);
 
 const RENDERERS = {
-  cesium: () => createCesiumSceneRenderer({ container: $('stage') }),
+  cesiumrs: () =>
+    createCesiumRsRenderer({
+      container: $('stage'),
+      time: Date.UTC(2026, 5, 21, 18, 0, 0),
+      signal: new AbortController().signal,
+    }),
 };
 
 const HARNESSES = {
   stub: () => [createStubHarness('stub (browser)'), {}],
-  cesium: () => [
-    createCesiumHarness({
+  cesiumrs: () => [
+    createCesiumRsConformanceHarness('cesiumrs (browser)', {
       model: ctx.assets.model,
       modelNode: ctx.assets.modelNode,
       missingModel: ctx.assets.missingModel,
     }),
-    { only: (id) => CESIUM_CHECKS.has(id) },
+    {},
   ],
 };
 
@@ -253,7 +255,7 @@ async function runScenes({ record = false, only } = {}) {
 }
 
 $('logic').onclick = () => runLogic('stub');
-$('logicCesium').onclick = () => runLogic('cesium');
+$('logicCesiumRs').onclick = () => runLogic('cesiumrs');
 $('check').onclick = () => runScenes();
 $('record').onclick = () => runScenes({ record: true });
 window.conformance = { runLogic, runScenes };

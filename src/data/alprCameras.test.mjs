@@ -2,7 +2,7 @@
 // Pure helpers and actual layer lifecycle with a minimal viewer/input harness.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import {
   bindFakeCesiumCamera,
   followEntity,

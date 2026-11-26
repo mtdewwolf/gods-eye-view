@@ -4,7 +4,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import {
   EARTHQUAKE_OVERLAY_COHORT_LIMIT,
   EARTHQUAKE_OVERLAY_COLLISION_CAPACITY,

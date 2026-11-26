@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
 import { transformWithEsbuild } from 'vite';
-import { BillboardCollection, Color, PointPrimitive } from 'cesium';
+import { BillboardCollection, Color, PointPrimitive } from './testSupport/cesiumrsCompat.mjs';
 import {
   syncCyberSonarAnimation,
   applyCyberSonarPrimitive,

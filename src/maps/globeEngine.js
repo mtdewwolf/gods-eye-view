@@ -4,7 +4,7 @@
  * globe port, for when the renderer's plugin hands the application no map
  * engine of its own (`src/render/applicationHooks.js`). The map stacks'
  * sources become the port's specs: Esri and OSM as `xyz` imagery, Cesium
- * ion's world imagery as `world` imagery, the photoreal stack as the port's
+ * ion's world imagery as Bing `xyz` imagery, the photoreal stack as the port's
  * photoreal base, and terrain as `world` terrain (or the ellipsoid where the
  * port has no keyless terrain to offer).
  *
@@ -28,7 +28,73 @@ const OSM_MAX_LEVEL = 19;
 const OSM_TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const OSM_CREDIT = '© OpenStreetMap contributors';
 /** Cesium ion's world imagery assets (`MAP_STACKS`' `style`). */
-const WORLD_STYLES = { 2: 'aerial', 3: 'aerialLabels' };
+const WORLD_STYLES = { 2: 'Aerial', 3: 'AerialWithLabels' };
+
+async function bingImagery(endpoint, style, signal) {
+  const options = endpoint.options ?? {};
+  if (!options.key) throw new Error('Ion Bing imagery endpoint has no key');
+  const base = options.url || endpoint.url || 'https://dev.virtualearth.net/';
+  const metadataUrl = new URL(
+    `REST/v1/Imagery/Metadata/${encodeURIComponent(options.mapStyle || WORLD_STYLES[style] || 'Aerial')}`,
+    base.endsWith('/') ? base : `${base}/`,
+  );
+  metadataUrl.searchParams.set('incl', 'ImageryProviders');
+  metadataUrl.searchParams.set('key', options.key);
+  metadataUrl.searchParams.set('uriScheme', 'https');
+  if (options.culture) metadataUrl.searchParams.set('culture', options.culture);
+  if (options.mapLayer)
+    metadataUrl.searchParams.set('mapLayer', options.mapLayer);
+  const response = await fetch(metadataUrl, { signal });
+  if (!response.ok)
+    throw new Error(`Bing imagery metadata answered ${response.status}`);
+  const metadata = await response.json();
+  const resource = metadata?.resourceSets?.[0]?.resources?.[0];
+  if (!resource?.imageUrl || !resource.imageUrlSubdomains?.length)
+    throw new Error('Bing imagery metadata is incomplete');
+  const template = resource.imageUrl;
+  const subdomains = resource.imageUrlSubdomains;
+  const attribution = (resource.imageryProviders ?? [])
+    .map((provider) => provider.attribution)
+    .filter(Boolean)
+    .join(' · ');
+  return Object.freeze({
+    kind: 'xyz',
+    url: template,
+    tiling: 'webMercator',
+    minLevel: 1,
+    maxLevel: resource.zoomMax,
+    tileSize: resource.imageWidth || 256,
+    ...(attribution ? { credit: credit(attribution) } : {}),
+    async fetchTile({ tile, signal: tileSignal }) {
+      let quadkey = '';
+      for (let bit = tile.level - 1; bit >= 0; bit--) {
+        const mask = 2 ** bit;
+        quadkey += String(
+          (Math.floor(tile.x / mask) % 2) + 2 * (Math.floor(tile.y / mask) % 2),
+        );
+      }
+      const url = template
+        .replaceAll(
+          '{subdomain}',
+          subdomains[(tile.x + tile.y) % subdomains.length],
+        )
+        .replaceAll('{quadkey}', quadkey)
+        .replaceAll('{culture}', options.culture || '');
+      const tileResponse = await fetch(url, { signal: tileSignal });
+      if (!tileResponse.ok) {
+        const error = new Error(
+          `Bing imagery tile answered ${tileResponse.status}`,
+        );
+        error.statusCode = tileResponse.status;
+        throw error;
+      }
+      return {
+        bytes: await tileResponse.arrayBuffer(),
+        contentType: tileResponse.headers.get('content-type'),
+      };
+    },
+  });
+}
 
 /** Values this engine released: never used again. */
 const released = new WeakSet();
@@ -236,10 +302,7 @@ export const globeMapEngine = Object.freeze({
         throw new Error(
           'Ion world imagery did not return a Bing imagery endpoint',
         );
-      return Object.freeze({
-        kind: 'world',
-        worldStyle: WORLD_STYLES[style] ?? 'aerial',
-      });
+      return bingImagery(endpoint, style, signal);
     },
   }),
   terrain: Object.freeze({

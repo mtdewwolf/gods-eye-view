@@ -4,15 +4,19 @@ import { createWeatherRendering, READY_WAKE_MS } from './rendering.js';
 import { createWeatherLayer } from './index.js';
 import { createWeatherClock } from './clock.js';
 import { worldClock } from '../../time/worldClock.js';
-import * as Cesium from 'cesium';
-import { Color, ImageryLayerCollection, GeographicTilingScheme } from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
+import {
+  Color,
+  ImageryLayerCollection,
+  GeographicTilingScheme,
+} from '../../testSupport/cesiumrsCompat.mjs';
 import { NO_IMAGERY_HOST } from './imageryHost.js';
 import { createWeatherShell } from './shellRendering.js';
-import { createCesiumFields } from '../../render/cesium/drawFields.js';
+import { createCesiumFields } from '../../testSupport/cesiumDrawFields.mjs';
 import { WEATHER_IMAGERY_Z } from './imageryOrder.js';
 import { fakeGlobePort } from '../../testSupport/fakeGlobePort.mjs';
 import { fakeSceneFrame } from '../../testSupport/fakeCesiumScene.mjs';
-import { createCesiumGlobe } from '../../render/cesium/globe.js';
+
 import { bindRenderer } from '../../render/rendererOf.js';
 import {
   createShellCesium,
@@ -1506,20 +1510,9 @@ test('host restore through update stages latest after a no-host start', async ()
   h.layer.destroy();
 });
 
-test('the global infrared mosaic draws through the real Cesium globe port', async () => {
-  const scene = {
-    imageryLayers: new Cesium.ImageryLayerCollection(),
-    globe: { show: true, tilesLoaded: true },
-    primitives: { length: 0, get: () => undefined },
-  };
-  const { port } = createCesiumGlobe(
-    { scene },
-    {
-      capabilities: new Set(['imageHooks', 'imageryOnTiles']),
-      requestRender: () => {},
-    },
-  );
-  const h = renderingHarness({ globeOf: () => port });
+test('the global infrared mosaic draws through the globe port', async () => {
+  const globe = fakeGlobePort();
+  const h = renderingHarness({ globeOf: () => globe });
   const stage = h.rendering.setFrame(
     {
       ...snapshot,
@@ -1529,24 +1522,20 @@ test('the global infrared mosaic draws through the real Cesium globe port', asyn
     times[0],
   );
   await flush();
-  const layer = scene.imageryLayers.get(0);
-  const provider = layer.imageryProvider;
-  assert.ok(provider.tilingScheme instanceof Cesium.GeographicTilingScheme);
-  assert.equal(provider.maximumLevel, 3);
-  assert.equal(provider.tileWidth, 256);
-  assert.equal(provider.tileHeight, 256);
-  assert.equal(provider.tilingScheme.getNumberOfXTilesAtLevel(0), 2);
-  assert.equal(provider.tilingScheme.getNumberOfYTilesAtLevel(0), 1);
-  assert.ok(
-    Cesium.Rectangle.equals(
-      provider.rectangle,
-      Cesium.Rectangle.fromDegrees(-180, -60, 180, 60),
-    ),
-  );
-  assert.equal(layer.colorToAlpha, undefined);
-  assert.equal(layer.alpha, 0, 'staged transparent');
+  assert.equal(globe.added.length, 1);
+  const [{ spec, alpha }] = globe.added;
+  assert.equal(spec.tiling, 'geographic');
+  assert.equal(spec.maxLevel, 3);
+  assert.equal(spec.tileSize, 256);
+  assert.deepEqual(spec.rectangle, {
+    west: -180,
+    south: -60,
+    east: 180,
+    north: 60,
+  });
+  assert.equal(alpha, 0, 'staged transparent');
   h.rendering.clear();
-  assert.equal(scene.imageryLayers.length, 0);
+  assert.equal(globe.layers.length, 0);
   assert.equal(await stage, false);
 });
 

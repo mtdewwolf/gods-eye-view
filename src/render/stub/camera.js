@@ -851,6 +851,14 @@ export function createStubCamera({
         frame.origin.z,
         1,
       ),
+    /** Write a world-space eye pose into the active frame without announcing a command. */
+    applyWorldPose(next) {
+      position = inverseFramePoint(frame, next.position);
+      direction = normalize(inverseFrameVector(frame, next.direction));
+      up = normalize(inverseFrameVector(frame, next.up));
+      right = normalize(cross(direction, up));
+      up = normalize(cross(right, direction));
+    },
     setViewRectangle(fn) {
       port.viewRectangle = fn;
     },

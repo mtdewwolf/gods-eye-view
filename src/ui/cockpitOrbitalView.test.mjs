@@ -7,7 +7,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createPinia } from 'pinia';
 import { createApp, defineComponent, h, nextTick } from 'vue';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import { CockpitViewController } from './cockpitController.js';
 import { useCockpitStore } from './stores/cockpit.js';
 import { useHudStore } from './stores/hud.js';

@@ -269,7 +269,7 @@ test('height queries go through the service', () => {
   // The renderer contract's own height members, and the renderer, stub and suite
   // that implement and call them: the Cesium adapter answers them through
   // this service.
-  const CONTRACT = /^src\/render\/(contract|stub|conformance|cesium)\//;
+  const CONTRACT = /^src\/render\/(contract|stub|conformance|cesiumrs?)\//;
   // Sites that asked the query port's height members before this service
   // went onto the port; each is to move onto `heightsOf`, and none is to be
   // added.

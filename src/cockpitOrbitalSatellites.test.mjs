@@ -2,10 +2,10 @@
 // satellite to another.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import { fromDegrees, magnitude } from './geo/index.js';
 import { hopPosition } from './cockpitOrbitalSatellites.js';
 
-const at = (lat, lon, alt) => Cesium.Cartesian3.fromDegrees(lon, lat, alt);
+const at = (lat, lon, alt) => fromDegrees(lon, lat, alt);
 
 test('the hop follows the great circle and lands on the satellite', () => {
   const from = at(0, 0, 400_000);
@@ -20,8 +20,8 @@ test('the hop follows the great circle and lands on the satellite', () => {
   // chord through it.
   const mid = hopPosition(from, to, 0.5);
   const radius = Math.hypot(mid.x, mid.y, mid.z);
-  const ra = Cesium.Cartesian3.magnitude(from);
-  const rb = Cesium.Cartesian3.magnitude(to);
+  const ra = magnitude(from);
+  const rb = magnitude(to);
   assert.ok(Math.abs(radius - (ra + rb) / 2) < 1e-6);
   assert.ok(Math.abs(Math.atan2(mid.y, mid.x) - Math.PI / 4) < 1e-9);
   assert.equal(hopPosition(null, to, 0.5), null);
@@ -30,7 +30,7 @@ test('the hop follows the great circle and lands on the satellite', () => {
 test('a hop to the opposite side goes round the Earth, not through it', () => {
   const from = at(0, 0, 400_000);
   const to = at(0, 180, 400_000);
-  const radius = Cesium.Cartesian3.magnitude(from);
+  const radius = magnitude(from);
   for (const p of [0.25, 0.5, 0.75]) {
     const point = hopPosition(from, to, p);
     assert.ok(

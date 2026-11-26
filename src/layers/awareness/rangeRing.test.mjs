@@ -10,7 +10,7 @@
 import '../../testSupport/registerDom.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../../testSupport/cesiumrsCompat.mjs';
 import { AWARENESS_RADIUS_M } from '../../data/militaryAwarenessEngine.js';
 import {
   AWARENESS_RANGE_ECHO,

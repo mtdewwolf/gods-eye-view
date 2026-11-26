@@ -19,7 +19,7 @@
 // real-vs-fallback bookkeeping is exercised rather than stubbed.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import { toDegrees, toRadians } from '../geo/index.js';
 import { sampleMeshFloorCells } from './meshFloorSampler.js';
 import { bindRenderer } from '../render/rendererOf.js';
 import { resolveEllipsoidalGround } from './terrainHeights.js';
@@ -69,8 +69,8 @@ function fakeScene(
       sampleHeightNow(point, options) {
         viewer.asked.push({ point: { ...point }, options });
         return sampleHeight({
-          longitude: Cesium.Math.toRadians(point.lon),
-          latitude: Cesium.Math.toRadians(point.lat),
+          longitude: toRadians(point.lon),
+          latitude: toRadians(point.lat),
         });
       },
     },
@@ -197,7 +197,7 @@ test('sampler: the probe goes where the point is, not to the cell centre', async
   await seedDem(cell, 120.0);
   const asked = [];
   const scene = fakeScene((carto) => {
-    asked.push(Cesium.Math.toDegrees(carto.longitude));
+    asked.push(toDegrees(carto.longitude));
     return 122.0;
   });
   const point = { lat: cell.lat + 0.0003, lon: cell.lon + 0.0004 };
@@ -215,7 +215,7 @@ test('sampler: a viaduct and the street beside it in one cell keep their own hei
   let calls = 0;
   const scene = fakeScene((carto) => {
     calls += 1;
-    return Math.abs(Cesium.Math.toDegrees(carto.latitude) - deckLat) < 1e-7 ? 129.0 : 121.0;
+    return Math.abs(toDegrees(carto.latitude) - deckLat) < 1e-7 ? 129.0 : 121.0;
   });
   const opts = { viewerLat: cell.lat, viewerLon: cell.lon };
   const onDeck = { lat: deckLat, lon: cell.lon };
@@ -236,7 +236,7 @@ test('sampler: a roof over the cell centre does not lift a bus on the street', a
   await seedDem(cell, 120.0);
   // A roof 22 m up covering the cell's centre; the street 30 m west of it.
   const scene = fakeScene((carto) =>
-    Math.abs(Cesium.Math.toDegrees(carto.longitude) - cell.lon) < 0.0001 ? 142.0 : 121.0);
+    Math.abs(toDegrees(carto.longitude) - cell.lon) < 0.0001 ? 142.0 : 121.0);
   const bus = { lat: cell.lat, lon: cell.lon - 0.0003 };
   sampleMeshFloorCells(scene, [bus], { viewerLat: cell.lat, viewerLon: cell.lon });
   assert.equal(cachedGroundFloor(bus.lat, bus.lon), 121.0);
@@ -297,8 +297,8 @@ test('sampler: a spot whose reading is refused does not use up the cell', async 
   const towerLon = cell.lon + 0.0004;
   const deckLat = cell.lat + 0.0003;
   const scene = fakeScene((carto) => {
-    if (Math.abs(Cesium.Math.toDegrees(carto.longitude) - towerLon) < 1e-7) return 380.0;
-    return Math.abs(Cesium.Math.toDegrees(carto.latitude) - deckLat) < 1e-7 ? 129.0 : 121.0;
+    if (Math.abs(toDegrees(carto.longitude) - towerLon) < 1e-7) return 380.0;
+    return Math.abs(toDegrees(carto.latitude) - deckLat) < 1e-7 ? 129.0 : 121.0;
   });
   const opts = { viewerLat: cell.lat, viewerLon: cell.lon };
   for (let i = 0; i < 10; i++) sampleMeshFloorCells(scene, [{ lat: cell.lat, lon: towerLon }], opts);
@@ -330,7 +330,7 @@ test('sampler: a spot refused while the DEM was cold is probed again once it is 
   let calls = 0;
   const scene = fakeScene((carto) => {
     calls += 1;
-    return Math.abs(Cesium.Math.toDegrees(carto.latitude) - deckLat) < 1e-7 ? 129.0 : 121.0;
+    return Math.abs(toDegrees(carto.latitude) - deckLat) < 1e-7 ? 129.0 : 121.0;
   });
   const opts = { viewerLat: cell.lat, viewerLon: cell.lon };
   const onDeck = { lat: deckLat, lon: cell.lon };
@@ -356,7 +356,7 @@ test('sampler: a spot refused while the DEM prior was evicted is probed again', 
   const cell = { lat: 41.5, lon: -97.66 };
   const deckLat = cell.lat + 0.0003;
   const scene = fakeScene((carto) =>
-    Math.abs(Cesium.Math.toDegrees(carto.latitude) - deckLat) < 1e-7 ? 129.0 : 121.0);
+    Math.abs(toDegrees(carto.latitude) - deckLat) < 1e-7 ? 129.0 : 121.0);
   const opts = { viewerLat: cell.lat, viewerLon: cell.lon };
   const onDeck = { lat: deckLat, lon: cell.lon };
   sampler.sampleMeshFloorCells(scene, [{ lat: cell.lat - 0.0003, lon: cell.lon }], opts);

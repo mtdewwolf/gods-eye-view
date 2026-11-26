@@ -185,6 +185,8 @@ const NAMED = Object.freeze({
   YELLOWGREEN: '9acd32',
 });
 
+export const NAMED_COLORS = NAMED;
+
 const rgbChannel = (text) =>
   Number.parseFloat(text) / (text.endsWith('%') ? 100 : 255);
 

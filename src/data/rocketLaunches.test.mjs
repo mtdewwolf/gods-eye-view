@@ -1,8 +1,8 @@
 // The click dispatcher's input port over a viewer double: the Cesium adapter's.
-import '../render/cesium/input.js';
+import '../testSupport/cesiumInput.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import { fromDegrees } from '../geo/ellipsoid.js';
 import { bindFakeDraw } from '../testSupport/fakeDrawPort.mjs';
 import { fakeSceneFrame } from '../testSupport/fakeCesiumScene.mjs';

@@ -257,12 +257,8 @@ async function bootLink(page, link) {
 /** The camera's position in degrees and metres. */
 const cameraAt = (page) =>
   page.evaluate(() => {
-    const c = window.__godsEyeView.viewer.camera.positionCartographic;
-    return {
-      lon: (c.longitude * 180) / Math.PI,
-      lat: (c.latitude * 180) / Math.PI,
-      height: c.height,
-    };
+    const { lon, lat, height } = window.__godsEyeView.renderer.camera.pose();
+    return { lon, lat, height };
   });
 
 /** Run `test(uiState, arg)` in the page until it is true. */
@@ -368,27 +364,46 @@ async function assertKeyRequired(page) {
 const findPick = (page, prefix, { box = null, step = 3 } = {}) =>
   page.evaluate(
     (want, area, stride) => {
-      const { scene } = window.__godsEyeView.viewer;
-      const rect = scene.canvas.getBoundingClientRect();
+      const { renderer } = window.__godsEyeView;
+      const rect = document
+        .querySelector('#cesiumContainer canvas')
+        .getBoundingClientRect();
       const { x, y, w, h } = area || {
         x: 0,
         y: Math.round(rect.height / 2),
         w: rect.width,
         h: 1,
       };
-      for (let py = y; py < y + h; py += stride)
-        for (let px = x; px < x + w; px += stride) {
-          // A drawn item's pick id names its draw set and its own id.
-          const picked = scene.pick({ x: px, y: py })?.id;
-          const id = typeof picked === 'string' ? picked : picked?.id;
-          if (typeof id === 'string' && id.startsWith(want))
-            return {
-              x: rect.left + px,
-              y: rect.top + py,
-              local: { x: px, y: py },
-              id,
-            };
+      const columns = Math.ceil(w / stride);
+      const rows = Math.ceil(h / stride);
+      const key = JSON.stringify([want, x, y, w, h, stride]);
+      const scans = (window.__streetQaScans ??= {});
+      const state = (scans[key] ??= { index: 0 });
+      const deadline = performance.now() + 1500;
+      while (state.index < columns * rows && performance.now() < deadline) {
+        const i = state.index++;
+        // Start in the middle of the view, where the fixture line crosses it.
+        const k = Math.floor(i / rows);
+        const col =
+          (Math.floor(columns / 2) +
+            (k % 2 ? -Math.ceil(k / 2) : k / 2) +
+            columns) %
+          columns;
+        const row = i % rows;
+        const px = x + col * stride;
+        const py = y + row * stride;
+        const id = renderer.query.pick(px, py)?.id;
+        if (typeof id === 'string' && id.startsWith(want)) {
+          delete scans[key];
+          return {
+            x: rect.left + px,
+            y: rect.top + py,
+            local: { x: px, y: py },
+            id,
+          };
         }
+      }
+      if (state.index >= columns * rows) delete scans[key];
       return null;
     },
     prefix,
@@ -418,20 +433,16 @@ async function findPickUntil(
 async function park(page, at = PARK) {
   for (let attempt = 0; attempt < 5; attempt++) {
     const stayed = await page.evaluate(async (at) => {
-      const v = window.__godsEyeView.viewer;
-      v.camera.cancelFlight?.();
-      const C = v.camera.positionCartographic.constructor;
-      v.camera.setView({
-        destination: v.scene.globe.ellipsoid.cartographicToCartesian(
-          C.fromDegrees(at.lon, at.lat, at.height),
-        ),
+      const camera = window.__godsEyeView.renderer.camera;
+      camera.cancelFlight();
+      camera.setView({
+        destination: { lon: at.lon, lat: at.lat, height: at.height },
         orientation: { heading: 0, pitch: at.pitch, roll: 0 },
       });
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      const c = v.camera.positionCartographic;
+      const c = camera.pose();
       return (
-        Math.abs((c.longitude * 180) / Math.PI - at.lon) < 0.001 &&
-        Math.abs((c.latitude * 180) / Math.PI - at.lat) < 0.001
+        Math.abs(c.lon - at.lon) < 0.001 && Math.abs(c.lat - at.lat) < 0.001
       );
     }, at);
     if (stayed) return;
@@ -524,8 +535,9 @@ async function main() {
         const area =
           box === 'column'
             ? await page.evaluate(() => {
-                const { height, width } =
-                  window.__godsEyeView.viewer.scene.canvas.getBoundingClientRect();
+                const { height, width } = document
+                  .querySelector('#cesiumContainer canvas')
+                  .getBoundingClientRect();
                 return { x: Math.round(width * 0.3), y: 0, w: 1, h: height };
               })
             : null;
@@ -900,9 +912,8 @@ async function main() {
             );
             await page.waitForFunction(
               (want) => {
-                const c =
-                  window.__godsEyeView.viewer.camera.positionCartographic;
-                return Math.abs((c.latitude * 180) / Math.PI - want) < 0.0005;
+                const c = window.__godsEyeView.renderer.camera.pose();
+                return Math.abs(c.lat - want) < 0.0005;
               },
               { timeout: 60_000 },
               cameraLat,

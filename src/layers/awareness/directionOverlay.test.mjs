@@ -4,7 +4,7 @@
 import '../../testSupport/registerDom.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import { fromDegrees } from '../../geo/index.js';
 import { createApp, nextTick } from 'vue';
 import { createPinia } from 'pinia';
 import { useAwarenessDirectionStore } from '../../ui/stores/awarenessDirection.js';
@@ -12,13 +12,13 @@ import AwarenessDirection from '../../ui/views/panels/AwarenessDirection.vue';
 import { createState } from './state.js';
 import { createRendering } from './rendering.js';
 import { bindRenderer } from '../../render/rendererOf.js';
-import { fakeCameraPort } from '../../testSupport/fakeCameraPort.mjs';
+import { fakeCameraPort } from '../../testSupport/neutralCameraPort.mjs';
 
 /** The rendering part over a subject with one military contact due east. */
 function overlay(screenAngle) {
   const state = createState({ services: {} });
   const container = document.body.appendChild(document.createElement('div'));
-  const subject = Cesium.Cartesian3.fromDegrees(0, 0, 1000);
+  const subject = fromDegrees(0, 0, 1000);
   const camera = fakeCameraPort({
     pose: { heading: 0, right: { x: 0, y: 1, z: 0 }, up: { x: 0, y: 0, z: 1 } },
   });
@@ -42,7 +42,7 @@ function overlay(screenAngle) {
             nearest: [
               {
                 callsign: 'RCH123',
-                position: Cesium.Cartesian3.fromDegrees(0.05, 0, 1000),
+                position: fromDegrees(0.05, 0, 1000),
                 distanceM: 5500,
                 track: 90,
               },

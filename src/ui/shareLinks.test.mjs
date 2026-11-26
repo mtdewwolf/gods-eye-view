@@ -3,7 +3,7 @@
 // makes `/share/<code>` links (following an entity when the camera does).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import { ShareLinkManager } from '../sharelink.js';
 import { ShareRestoration, sharedFixNotice } from './shareRestoration.js';
 import {

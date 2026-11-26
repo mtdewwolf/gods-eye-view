@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as Cesium from 'cesium';
+import * as Cesium from '../testSupport/cesiumrsCompat.mjs';
 import {
   TERRAIN_RETRY_ATTEMPTS,
   TERRAIN_RETRY_BASE_MS,
@@ -12,7 +12,7 @@ import {
 import {
   KEYLESS_TERRAIN_URL,
   createKeylessTerrainResource,
-} from '../render/cesium/mapTerrain.js';
+} from '../testSupport/cesiumMapTerrain.mjs';
 
 const START = 1_700_000_000_000;
 
