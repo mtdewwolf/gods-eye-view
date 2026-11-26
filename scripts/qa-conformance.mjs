@@ -29,13 +29,14 @@ export const EXPECTED_SKIPS = Object.freeze({
 const RUN_TIMEOUT_MS = 15 * 60_000;
 
 function parseArgs(argv) {
-  const args = { port: 5289 };
+  const args = { port: 5289, renderer: 'cesiumrs' };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === '--url') args.url = argv[++i];
     else if (arg === '--port') args.port = Number(argv[++i]);
     else if (arg === '--only') args.only = argv[++i].split(',');
     else if (arg === '--json') args.json = argv[++i];
+    else if (arg === '--renderer') args.renderer = argv[++i];
     else throw new Error(`Unknown argument: ${arg}`);
   }
   return args;
@@ -73,7 +74,12 @@ async function run(args) {
       (await puppeteer.executablePath()),
     defaultViewport: { width: 1280, height: 800 },
     protocolTimeout: RUN_TIMEOUT_MS,
-    args: ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader'],
+    args: [
+      '--no-sandbox',
+      '--use-gl=angle',
+      '--use-angle=swiftshader',
+      '--enable-unsafe-swiftshader',
+    ],
   });
   const pageErrors = [];
   let report;
@@ -85,7 +91,8 @@ async function run(args) {
       timeout: 120_000,
     });
     report = await page.evaluate(
-      (only) => window.conformance.runLogic('cesium', { only }),
+      (which, only) => window.conformance.runLogic(which, { only }),
+      args.renderer,
       args.only ?? null,
     );
   } finally {
@@ -93,7 +100,7 @@ async function run(args) {
   }
   if (args.json) writeFileSync(args.json, JSON.stringify(report, null, 2));
   console.log(
-    `cesium: ${report.passed} passed, ${report.failed} failed, ${report.skipped} skipped`,
+    `${args.renderer}: ${report.passed} passed, ${report.failed} failed, ${report.skipped} skipped`,
   );
   const problems = [];
   for (const failure of report.failures) {
@@ -101,7 +108,11 @@ async function run(args) {
     problems.push(failure.id);
   }
   for (const skip of report.skips) {
-    const expected = EXPECTED_SKIPS[skip.id] === skip.detail;
+    const expected =
+      EXPECTED_SKIPS[skip.id] === skip.detail ||
+      (args.renderer !== 'cesium' &&
+        (skip.detail?.startsWith('no ') ||
+          skip.detail === 'no scripted heights in this harness'));
     console.log(`skip\t${skip.id}\t${skip.detail ?? ''}`);
     if (!expected) problems.push(`${skip.id} skipped`);
   }
@@ -109,7 +120,7 @@ async function run(args) {
   if (problems.length) {
     console.error(`FAIL: ${problems.join('; ')}`);
     process.exitCode = 1;
-  } else console.log('ok: the Cesium renderer passes the conformance suite');
+  } else console.log(`ok: the ${args.renderer} renderer passes the conformance suite`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`)
